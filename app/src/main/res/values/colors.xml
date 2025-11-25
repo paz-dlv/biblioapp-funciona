@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Colores Material3 personalizados para el tema -->
+    <color name="md_theme_primary">#6750A4</color>
+    <color name="md_theme_onPrimary">#FFFFFF</color>
+    <color name="md_theme_background">#FFFBFE</color>
+    <color name="md_theme_onBackground">#1C1B1F</color>
+
+    <!-- Colores por defecto que algunas plantillas esperan -->
+    <color name="purple_200">#BB86FC</color>
+    <color name="purple_500">#6200EE</color>
+    <color name="purple_700">#3700B3</color>
+    <color name="teal_200">#03DAC5</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="loginBackground">#E5D9F7</color>
+
+    <!-- Colores personalizados para vistas suaves y modernas -->
+    <color name="colorBackground">#F5F7FA</color>
+    <color name="cardColor">#FFFFFF</color>
+    <color name="textPrimary">#374151</color>
+    <color name="textSecondary">#6B7280</color>
+    <color name="buttonColor">#A7F3D0</color>
+    <color name="textButton">#065F46</color>
+    <color name="bottom_nav_icon_color">#6750A4</color>
+    <color name="bottom_nav_text_color">#FFFFFF</color>
+
+    <!-- Colores para login moderno con magenta -->
+    <color name="colorPrimary">#E5D9F7</color>
+    <color name="editTextBg">#FFFFFF</color>
+    <color name="focusedEditTextBg">#FFE3F9</color>
+    <color name="editTextStroke">#E5D9F7</color>
+
+    <!-- Color para el círculo detrás del usuario -->
+    <color name="userCircleBg">#6750A4</color>
+</resources>

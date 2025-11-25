@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_profile"
+        android:title="Perfil"
+        android:icon="@drawable/ic_profile" />
+    <item
+        android:id="@+id/nav_products"
+        android:title="Productos"
+        android:icon="@drawable/ic_products" /> <!-- CORREGIDO -->
+    <item
+        android:id="@+id/nav_add"
+        android:title="Agregar"
+        android:icon="@drawable/ic_add" />
+</menu>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#F6F0FA"
+    android:gravity="center_horizontal"
+    android:padding="24dp">
+
+    <!-- Avatar circular/logo -->
+    <ImageView
+        android:id="@+id/profileAvatar"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginBottom="14dp"
+        android:background="@drawable/circle_bg"
+        android:contentDescription="Avatar"
+        android:elevation="4dp"
+        android:padding="8dp"
+        android:src="@drawable/logo_app" />
+
+    <!-- Título Datos del usuario -->
+    <TextView
+        android:id="@+id/chipUserData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/chip_bg"
+        android:elevation="2dp"
+        android:text="Datos del usuario"
+        android:textColor="#936595"
+        android:gravity="center"
+        android:paddingLeft="18dp"
+        android:paddingTop="6dp"
+        android:paddingRight="18dp"
+        android:paddingBottom="6dp"/>
+
+    <!-- CardView para datos de usuario -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:layout_gravity="center_horizontal"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="6dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+            <!-- Nombre -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nombre"
+                android:textColor="#936595"
+                android:layout_gravity="start"
+                android:layout_marginBottom="2dp"/>
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chip_bg"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:textColor="#936595"
+                android:layout_gravity="start"
+                android:elevation="1dp"
+                android:text="Fabian"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Email -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:textColor="#936595"
+                android:layout_gravity="start"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"/>
+
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chip_bg"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:textColor="#936595"
+                android:layout_gravity="start"
+                android:elevation="1dp"
+                android:text="fabian@gmail.com"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- Dirección -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dirección"
+                android:textColor="#936595"
+                android:layout_gravity="start"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"/>
+
+            <TextView
+                android:id="@+id/tvAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chip_bg"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:textColor="#936595"
+                android:layout_gravity="start"
+                android:elevation="1dp"
+                android:text="Calle 123, Ciudad"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- Teléfono -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Teléfono"
+                android:textColor="#936595"
+                android:layout_gravity="start"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"/>
+
+            <TextView
+                android:id="@+id/tvPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chip_bg"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:textColor="#936595"
+                android:layout_gravity="start"
+                android:elevation="1dp"
+                android:text="123456789"
+                android:layout_marginBottom="10dp"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Botón de cerrar sesión moderno -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLogout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="#936595"
+        android:elevation="2dp"
+        android:text="Cerrar sesión"
+        android:textColor="#FFFFFF" />
+
+</LinearLayout>

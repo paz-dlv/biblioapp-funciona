@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.fragments.AddProductFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Título del libro"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/etTitle"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Ej: El Principito"
+            android:background="@drawable/input_background"
+            android:padding="12dp"
+            android:textSize="15sp"/>
+
+        <!-- Autor -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Autor"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/etAuthor"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Ej: Antoine de Saint-Exupéry"
+            android:background="@drawable/input_background"
+            android:padding="12dp"
+            android:textSize="15sp"/>
+
+        <!-- Género -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Género"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/etGenre"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Ej: Literatura Infantil"
+            android:background="@drawable/input_background"
+            android:padding="12dp"
+            android:textSize="15sp"/>
+
+        <!-- Descripción -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Descripción"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/etDescription"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:hint="Ej: Libro para todas las edades"
+            android:background="@drawable/input_background"
+            android:padding="12dp"
+            android:textSize="15sp"
+            android:gravity="top"/>
+
+        <!-- Precio -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Precio"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/etPrice"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Ej: 12000"
+            android:background="@drawable/input_background"
+            android:padding="12dp"
+            android:textSize="15sp"
+            android:inputType="number"/>
+
+        <!-- Stock -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stock"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/etStock"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Ej: 10"
+            android:background="@drawable/input_background"
+            android:padding="12dp"
+            android:textSize="15sp"
+            android:inputType="number"/>
+
+        <!-- Botón para seleccionar imágenes -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSelectImage"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Seleccionar Imágenes"/>
+
+        <!-- RecyclerView para mostrar la vista previa de las imágenes seleccionadas -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvImagePreview"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_image_preview"
+            tools:visibility="visible"/>
+
+        <!-- Botón de Enviar -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Crear Libro"/>
+
+        <!-- Barra de Progreso -->
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"/>
+    </LinearLayout>
+</ScrollView>

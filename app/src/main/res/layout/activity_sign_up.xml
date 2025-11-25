@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/loginBackground">
+
+    <!-- LOGO FUERA DE LA CARDVIEW, CENTRADO ARRIBA -->
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/logo_app"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/cardSignUp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Card central flotando y centrada -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardSignUp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="40dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        android:background="@color/cardColor"
+        app:layout_constraintTop_toBottomOf="@+id/imgLogo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="32dp">
+
+            <!-- Título SIGN UP -->
+            <TextView
+                android:id="@+id/tvSignUpTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="14dp"
+                android:fontFamily="sans-serif"
+                android:text="Registrar cuenta"
+                android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+                android:textColor="@color/colorPrimary" />
+
+            <!-- Espaciador extra antes del texto -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="30dp" />
+
+            <!-- Nombre -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="sans-serif"
+                android:text="Nombre"
+                android:textColor="@color/textSecondary" />
+
+            <EditText
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/edittext_selector"
+                android:fontFamily="sans-serif"
+                android:hint="Ingresa tu nombre"
+                android:inputType="textPersonName"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:textColor="@color/textPrimary"
+                android:textColorHint="@color/textSecondary" />
+
+            <!-- Email -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="sans-serif"
+                android:text="Email"
+                android:textColor="@color/textSecondary" />
+
+            <EditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/edittext_selector"
+                android:fontFamily="sans-serif"
+                android:hint="Ingresa tu email"
+                android:inputType="textEmailAddress"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:textColor="@color/textPrimary"
+                android:textColorHint="@color/textSecondary" />
+
+            <!-- Contraseña -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="sans-serif"
+                android:text="Contraseña"
+                android:textColor="@color/textSecondary" />
+
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/edittext_selector"
+                android:fontFamily="sans-serif"
+                android:hint="Crea una contraseña"
+                android:inputType="textPassword"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:textColor="@color/textPrimary"
+                android:textColorHint="@color/textSecondary" />
+
+            <!-- Dirección de envío -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="sans-serif"
+                android:text="Dirección de envío"
+                android:textColor="@color/textSecondary" />
+
+            <EditText
+                android:id="@+id/etShippingAddress"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/edittext_selector"
+                android:fontFamily="sans-serif"
+                android:hint="Ingresa tu dirección"
+                android:inputType="textPostalAddress"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:textColor="@color/textPrimary"
+                android:textColorHint="@color/textSecondary" />
+
+            <!-- Teléfono -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="sans-serif"
+                android:text="Teléfono"
+                android:textColor="@color/textSecondary" />
+
+            <EditText
+                android:id="@+id/etPhone"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="18dp"
+                android:background="@drawable/edittext_selector"
+                android:fontFamily="sans-serif"
+                android:hint="Ingresa tu teléfono"
+                android:inputType="phone"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:textColor="@color/textPrimary"
+                android:textColorHint="@color/textSecondary" />
+
+            <!-- Espaciador extra antes del botón -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="30dp" />
+
+            <!-- ProgressBar -->
+            <ProgressBar
+                android:id="@+id/progress"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="14dp"
+                android:visibility="gone" />
+
+            <!-- Botón REGISTRARSE -->
+            <Button
+                android:id="@+id/btnSignUp"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/rounded_button"
+                android:fontFamily="sans-serif"
+                android:text="Registrarse"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="32dp" />
+
+            <!-- Link a Login -->
+            <TextView
+                android:id="@+id/tvLoginLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="sans-serif"
+                android:text="¿Ya tienes cuenta? Inicia sesión"
+                android:textColor="@color/colorPrimary"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

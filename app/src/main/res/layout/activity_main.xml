@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/loginBackground">
+
+    <!-- LOGO ENCIMA DE LA CARD -->
+
+    <!-- Card de login centrada -->
+
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="184dp"
+        android:layout_height="181dp"
+        android:layout_marginTop="76dp"
+        android:src="@drawable/logo_app"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardLogin"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="40dp"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="10dp"
+        android:background="@color/cardColor"
+        app:layout_constraintTop_toBottomOf="@+id/imgLogo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="566dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="32dp">
+
+            <!-- Título -->
+            <TextView
+                android:id="@+id/tvLoginTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="20dp"
+                android:fontFamily=""
+                android:text="Iniciar sesión"
+                android:textColor="@color/colorPrimary"
+                android:textSize="24sp"
+                android:textStyle="italic" />
+
+            <!-- Email -->
+            <EditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="18dp"
+                android:background="@drawable/edittext_selector"
+                android:fontFamily=""
+                android:hint="Correo electrónico"
+                android:inputType="textEmailAddress"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:textColor="@color/textPrimary"
+                android:textColorHint="@color/textSecondary"
+                android:textStyle="italic" />
+
+            <!-- Password -->
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="22dp"
+                android:background="@drawable/edittext_selector"
+                android:fontFamily=""
+                android:hint="Contraseña"
+                android:inputType="textPassword"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:textColor="@color/textPrimary"
+                android:textColorHint="@color/textSecondary"
+                android:textStyle="italic" />
+
+            <!-- Botón Login -->
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/rounded_button"
+                android:fontFamily=""
+                android:text="Iniciar sesión"
+                android:textColor="@color/white"
+                android:textStyle="italic" />
+
+            <!-- ProgressBar de login -->
+            <ProgressBar
+                android:id="@+id/progress"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone" />
+
+            <!-- Link: ¿No tienes cuenta? Regístrate -->
+            <TextView
+                android:id="@+id/tvSignUpLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="6dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily=""
+                android:padding="8dp"
+                android:text="¿No tienes cuenta? Regístrate"
+                android:textColor="@color/colorPrimary"
+                android:textSize="15sp"
+                android:textStyle="italic" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

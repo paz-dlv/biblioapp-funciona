@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">App BiblioApp</string>
+    <string name="login_title">Iniciar sesión</string>
+    <string name="email_hint">Correo electrónico</string>
+    <string name="password_hint">Contraseña</string>
+    <string name="login_button">Iniciar sesión</string>
+    <string name="signup_button">Crear cuenta</string>
+    <string name="name_hint">Nombre</string>
+    <string name="lastname_hint">Apellido</string>
+    <string name="shipping_address_hint">Dirección de envío</string>
+    <string name="phone_hint">Teléfono</string>
+    <string name="welcome_message">¡Bienvenido!</string>
+    <string name="nombre">Nombre</string>
+    <string name="email">Correo electrónico</string>
+    <string name="cerrar_sesion">Cerrar sesión</string>
+    <string name="error_login">Error al iniciar sesión. Verifica tus datos.</string>
+    <string name="error_registration">Error al registrarse. Inténtalo de nuevo.</string>
+    <string name="error_network">Error de red. Inténtalo de nuevo.</string>
+    <string name="error_email_exists">El correo electrónico ya está registrado.</string>
+    <string name="error_invalid_email">Email inválido</string>
+    <string name="error_fill_fields">Completa todos los campos</string>
+    <string name="error_password_short">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="register_success">¡Registro exitoso!</string>
+    <string name="register_error">Error al registrarse. Inténtalo de nuevo.</string>
+    <string name="loading">Cargando...</string>
+    <string name="vista_previa_de_imagen_seleccionada">Vista previa de imagen seleccionada</string>
+    <string name="product_image">Imagen del producto</string>
+</resources>
