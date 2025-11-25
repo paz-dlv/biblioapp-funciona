@@ -69,6 +69,12 @@ dependencies {
     implementation(libs.okhttp) // Cliente HTTP subyacente
     implementation(libs.okhttp.logging) // Interceptor de logging para depuración
 
+
+    // Imágenes
+    implementation(libs.coil)
+    implementation(libs.androidx.activity)
+
+
     // RecyclerView
     implementation("androidx.recyclerview:recyclerview:1.3.2")
 

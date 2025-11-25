@@ -4,7 +4,10 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.analytics.ecommerce.Product
+import coil.load
+import com.biblioapp.databinding.ItemProductBinding
+import com.biblioapp.model.Product
+import com.biblioapp.ui.ProductDetailActivity
 
 class ProductAdapter(
     private var items: List<Product> = emptyList()

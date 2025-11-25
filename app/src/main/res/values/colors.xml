@@ -17,7 +17,7 @@
 
     <!-- Colores personalizados para vistas suaves y modernas -->
     <color name="colorBackground">#F5F7FA</color>
-    <color name="cardColor">#FFFFFF</color>
+    <color name="cardColor">#BB86FC</color>
     <color name="textPrimary">#374151</color>
     <color name="textSecondary">#6B7280</color>
     <color name="buttonColor">#A7F3D0</color>

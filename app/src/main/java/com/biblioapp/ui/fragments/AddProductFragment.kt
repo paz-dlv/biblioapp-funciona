@@ -12,6 +12,7 @@ import androidx.compose.ui.test.isEnabled
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.biblioapp.api.RetrofitClient
+import com.biblioapp.databinding.FragmentAddProductBinding
 import com.biblioapp.model.CreateProductRequest
 import com.biblioapp.model.ProductImage
 import com.biblioapp.ui.adapter.ImagePreviewAdapter
@@ -20,11 +21,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 
-private var Any.visibility: Int
-private val K.btnSubmit: Any
-private val K.progress: Any
+
 
 class AddProductFragment : Fragment() {
 
@@ -146,7 +148,6 @@ class AddProductFragment : Fragment() {
         binding.etPrice.text?.clear()
         binding.etStock.text?.clear()
         selectedImageUris.clear()
-        imagePreviewAdapter.notifyDataSetChanged()
         binding.rvImagePreview.visibility = View.GONE
     }
 

@@ -4,6 +4,8 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
+import com.biblioapp.databinding.ItemImagePreviewBinding
 
 class ImagePreviewAdapter(private val uris: List<Uri>) : // El constructor recibe la lista de URIs
     RecyclerView.Adapter<ImagePreviewAdapter.ViewHolder>() {

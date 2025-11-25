@@ -3,8 +3,10 @@ package com.biblioapp.ui.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
+import com.biblioapp.databinding.ItemImageSliderBinding
 
-class ImageSliderAdapter(private val image: List<String>) :
+class ImageSliderAdapter(private val images: List<String>) :
     RecyclerView.Adapter<ImageSliderAdapter.ImageViewHolder>() {
 
     // El ViewHolder contiene la vista de una sola imagen del carrusel.
@@ -17,7 +19,7 @@ class ImageSliderAdapter(private val image: List<String>) :
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         // Obtenemos la URL de la imagen en la posición actual.
-        val imageUrl = image[position]
+        val imageUrl = images[position]
         // Usamos Coil para cargar la imagen en el ImageView.
         holder.binding.imageView.load(imageUrl) {
             placeholder(android.R.drawable.ic_menu_gallery)
@@ -26,5 +28,5 @@ class ImageSliderAdapter(private val image: List<String>) :
     }
 
     // El carrusel tendrá tantas páginas como imágenes haya en la lista.
-    override fun getItemCount(): Int = image.size
+    override fun getItemCount(): Int = images.size
 }
