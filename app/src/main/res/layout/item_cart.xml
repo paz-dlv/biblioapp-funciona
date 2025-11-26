@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    android:foreground="?attr/selectableItemBackground">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgCover"
+            android:layout_width="72dp"
+            android:layout_height="96dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="cover"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Título del libro"
+            android:textColor="@color/textPrimary"
+            android:textStyle="bold"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@id/imgCover"
+            app:layout_constraintTop_toTopOf="@id/imgCover"
+            app:layout_constraintEnd_toStartOf="@id/btnDelete"
+            android:layout_marginStart="12dp" />
+
+        <TextView
+            android:id="@+id/tvAuthor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Autor"
+            android:textColor="@color/textSecondary"
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="@id/tvTitle"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            app:layout_constraintEnd_toStartOf="@id/btnDelete"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:id="@+id/tvPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$9.99"
+            android:textColor="@color/textPrimary"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/tvTitle"
+            app:layout_constraintTop_toBottomOf="@id/tvAuthor"
+            android:layout_marginTop="8dp" />
+
+        <LinearLayout
+            android:id="@+id/layoutQty"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            android:layout_marginTop="8dp">
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btnMinus"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_media_previous"
+                app:tint="?attr/colorPrimary"
+                android:contentDescription="minus"
+                android:scaleType="center" />
+
+            <TextView
+                android:id="@+id/tvQty"
+                android:layout_width="40dp"
+                android:layout_height="36dp"
+                android:gravity="center"
+                android:text="1"
+                android:textSize="15sp"
+                android:textColor="@color/textPrimary" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btnPlus"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_media_next"
+                app:tint="?attr/colorPrimary"
+                android:contentDescription="plus"
+                android:scaleType="center" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btnDelete"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_delete"
+            android:contentDescription="delete"
+            app:tint="?attr/colorPrimary"
+            app:layout_constraintTop_toTopOf="@id/tvTitle"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tvStock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="En stock: 3"
+            android:textSize="12sp"
+            android:textColor="@color/textSecondary"
+            app:layout_constraintStart_toStartOf="@id/tvTitle"
+            app:layout_constraintTop_toBottomOf="@id/tvPrice"
+            android:layout_marginTop="6dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

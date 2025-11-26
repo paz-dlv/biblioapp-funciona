@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Colores Material3 personalizados para el tema -->
-    <color name="md_theme_primary">#6750A4</color>
-    <color name="md_theme_onPrimary">#FFFFFF</color>
+
     <color name="md_theme_background">#FFFBFE</color>
     <color name="md_theme_onBackground">#1C1B1F</color>
 
@@ -24,6 +23,8 @@
     <color name="textButton">#065F46</color>
     <color name="bottom_nav_icon_color">#6750A4</color>
     <color name="bottom_nav_text_color">#FFFFFF</color>
+    <color name="md_theme_primary">#6750A4</color>
+    <color name="md_theme_onPrimary">#FFFFFF</color>
 
     <!-- Colores para login moderno con magenta -->
     <color name="colorPrimary">#E5D9F7</color>

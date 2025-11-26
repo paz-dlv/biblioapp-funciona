@@ -1,4 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Usuario / Auth -->
     <string name="app_name">App BiblioApp</string>
     <string name="login_title">Iniciar sesión</string>
     <string name="email_hint">Correo electrónico</string>
@@ -22,7 +24,46 @@
     <string name="error_password_short">La contraseña debe tener al menos 6 caracteres</string>
     <string name="register_success">¡Registro exitoso!</string>
     <string name="register_error">Error al registrarse. Inténtalo de nuevo.</string>
+
+    <!-- Genéricas / UI -->
     <string name="loading">Cargando...</string>
     <string name="vista_previa_de_imagen_seleccionada">Vista previa de imagen seleccionada</string>
     <string name="product_image">Imagen del producto</string>
+
+    <!-- Cart / Carrito -->
+    <string name="cart_title">Carrito</string>
+    <string name="empty_cart_image_desc">Imagen carrito vacío</string>
+    <string name="empty_cart_title">Tu carrito está vacío</string>
+    <string name="empty_cart_subtitle">Agrega libros y vuelve cuando quieras.</string>
+    <string name="coupon_hint">Código de cupón</string>
+    <string name="apply_button">Aplicar</string>
+    <string name="checkout_button">Pagar</string>
+    <string name="subtotal_label">Subtotal</string>
+    <string name="tax_label">Impuestos</string>
+    <string name="shipping_label">Envío</string>
+    <string name="total_label">Total</string>
+
+    <!-- Mensajes / diálogos -->
+    <string name="coupon_enter_code">Ingresa un código</string>
+    <string name="coupon_invalid">Cupón inválido</string>
+    <string name="coupon_applied">Cupón aplicado</string>
+    <string name="no_stock_message">No hay stock suficiente</string>
+
+    <string name="delete_title">Eliminar</string>
+    <string name="delete_confirm">¿Eliminar este ítem del carrito?</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
+
+    <string name="confirm_checkout_title">Confirmar pago</string>
+    <string name="confirm_checkout_message">¿Deseas simular el pago y finalizar la compra?</string>
+    <string name="checkout_success_simulated">Compra realizada (simulada). Gracias.</string>
+    <string name="checkout_error">Error en el checkout</string>
+
+    <string name="cart_loading_error">Error cargando carrito</string>
+    <string name="cart_item_update_error">No se pudo actualizar la cantidad</string>
+    <string name="cart_item_delete_error">No se pudo eliminar el ítem</string>
+    <string name="cart_item_delete_error_toast">Error al eliminar</string>
+
+    <!-- Otros -->
+    <string name="placeholder_image_desc">Imagen de producto</string>
 </resources>
