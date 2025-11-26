@@ -21,9 +21,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.jvm.java
 
-private lateinit var binding: ActivityMainBinding
-private lateinit var tokenManager: TokenManager
-
 class MainActivity : AppCompatActivity() { // Activity principal de login
 
     private lateinit var binding: ActivityMainBinding // Referencia a ViewBinding para acceder a vistas
@@ -70,12 +67,6 @@ class MainActivity : AppCompatActivity() { // Activity principal de login
             startActivity(intent)
         }
 
-        // Si ya hay sesión, vamos directo a Home
-        if (tokenManager.isLoggedIn()) { // Consultamos si hay token guardado
-            goToHome() // Navegamos a Home
-            return // Terminamos onCreate para no mostrar login
-        }
-
         binding.btnLogin.setOnClickListener { // Click en botón Login
             val email = binding.etEmail.text?.toString()?.trim().orEmpty() // Obtenemos email
             val password = binding.etPassword.text?.toString()?.trim().orEmpty() // Obtenemos password
@@ -103,12 +94,9 @@ class MainActivity : AppCompatActivity() { // Activity principal de login
                     // --- PASO CLAVE: GUARDADO DEL TOKEN ---
                     val authToken = loginResponse.authToken
 
-                    // --- PASO CLAVE: GUARDADO TEMPORAL MANUAL ---
-                    // Guardamos el token en SharedPreferences para que la siguiente llamada lo encuentre.
-                    getSharedPreferences("session", Context.MODE_PRIVATE).edit().apply {
-                        putString("jwt_token", authToken)
-                        apply()
-                    }
+                    // --- PASO CLAVE: GUARDADO TEMPORAL MANUAL REEMPLAZADO ---
+                    // Usamos TokenManager.saveAuth para guardar el token (y que otros TokenManager lo lean desde prefs)
+                    tokenManager.saveAuth(authToken, "", "", null)
 
                     // --- FASE 2: OBTENCIÓN DE DATOS (usando el servicio PRIVADO) ---
                     // Ahora llamamos a createAuthService con 'requiresAuth = true'.

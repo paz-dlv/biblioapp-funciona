@@ -13,9 +13,7 @@ import com.biblioapp.api.RetrofitClient
 import com.biblioapp.api.TokenManager
 import com.biblioapp.model.RegisterUserRequest
 import com.biblioapp.model.User
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import retrofit2.Response
 
@@ -53,12 +51,10 @@ class SignUpActivity : AppCompatActivity() {
 
             val authService = RetrofitClient.createAuthService(this)
 
-            // Usamos lifecycleScope + withContext(Dispatchers.IO)
+            // Usamos lifecycleScope y llamamos al método suspend directamente
             lifecycleScope.launch {
                 try {
-                    val response: Response<User> = withContext(Dispatchers.IO) {
-                        authService.signUp(request)
-                    }
+                    val response: Response<User> = authService.signUp(request)
 
                     Log.d("SignUp", "Response body: ${response.body()}")
                     Log.d("SignUp", "Response error: ${response.errorBody()?.string()}")

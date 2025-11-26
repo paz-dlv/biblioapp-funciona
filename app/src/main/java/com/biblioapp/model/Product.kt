@@ -9,11 +9,9 @@ data class Product(
 
     val genre: String,
 
-    val description: String,
+    val price: Double?,
 
-    val price: Double,
-
-    val stock: Int,
+    val stock: Int?,
 
     val image: List<ProductImage>?
 ) : java.io.Serializable

@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.ui.test.isEnabled
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.biblioapp.api.RetrofitClient
@@ -25,8 +24,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
-
-
 
 class AddProductFragment : Fragment() {
 
@@ -106,11 +103,13 @@ class AddProductFragment : Fragment() {
 
                 Log.d("AddProductFragment", "Enviando petición para crear producto: $req")
                 val resp = withContext(Dispatchers.IO) { service.createProduct(req) }
-                if (resp != null) {
+                // Usar el product dentro del wrapper CreateProductResponse si viene
+                if (resp != null && resp.product != null) {
                     Toast.makeText(requireContext(), "Producto creado exitosamente", Toast.LENGTH_SHORT).show()
                     clearForm()
                 } else {
-                    Toast.makeText(requireContext(), "Error: No se recibió confirmación del servidor", Toast.LENGTH_LONG).show()
+                    Log.w("AddProductFragment", "Respuesta inválida al crear producto: $resp")
+                    Toast.makeText(requireContext(), "Error: respuesta inválida del servidor", Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
                 Log.e("AddProductFragment", "Error al crear el producto", e)

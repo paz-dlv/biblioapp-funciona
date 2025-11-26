@@ -19,7 +19,7 @@ interface AuthService {
     suspend fun getMe(): User
 
     @POST("auth/signup")
-    fun signUp(@Body request: RegisterUserRequest): Response<User>
+    suspend fun signUp(@Body request: RegisterUserRequest): Response<User>
 }
 
 
