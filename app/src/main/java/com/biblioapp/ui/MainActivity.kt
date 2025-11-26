@@ -33,12 +33,12 @@ class MainActivity : AppCompatActivity() { // Activity principal de login
 
         tokenManager = TokenManager(this) // Inicializamos TokenManager con contexto
 
-        // === NUEVO: si ya hay sesión, nos aseguramos de tener el role guardado antes de ir a Home ===
+        // === NUEVO: si ya hay sesión, nos aseguramos de tener el role guardado antes de ir a la vista correspondiente ===
         if (tokenManager.isLoggedIn()) { // Consultamos si hay token guardado
             val existingRole = tokenManager.getRole()
             if (!existingRole.isNullOrBlank()) {
-                // Ya tenemos role, podemos seguir directamente
-                goToHome()
+                // Ya tenemos role, navegamos según rol
+                navigateByRole(existingRole)
                 return
             } else {
                 // Si no tenemos role, intentamos obtener el perfil (requiere token)
@@ -49,12 +49,12 @@ class MainActivity : AppCompatActivity() { // Activity principal de login
                             privateAuthService.getMe()
                         }
                         profile.role?.let { tokenManager.saveRole(it) }
+                        navigateByRole(profile.role)
                     } catch (e: Exception) {
                         Log.w("MainActivity", "No se pudo obtener role al iniciar: ${e.message}")
                         // fallback a CLIENT si falla
                         tokenManager.saveRole("CLIENT")
-                    } finally {
-                        goToHome()
+                        navigateByRole("CLIENT")
                     }
                 }
                 return // esperamos al launch para navegar
@@ -84,8 +84,6 @@ class MainActivity : AppCompatActivity() { // Activity principal de login
             lifecycleScope.launch {
                 try {
                     // --- FASE 1: LOGIN (usando el servicio PÚBLICO) ---
-                    // Llamamos a createAuthService sin el segundo parámetro (o con 'false'),
-                    // para obtener un servicio sin token.
                     val publicAuthService = RetrofitClient.createAuthService(this@MainActivity)
                     val loginResponse = withContext(Dispatchers.IO) {
                         publicAuthService.login(LoginRequest(email = email, password = password))
@@ -94,16 +92,13 @@ class MainActivity : AppCompatActivity() { // Activity principal de login
                     // --- PASO CLAVE: GUARDADO DEL TOKEN ---
                     val authToken = loginResponse.authToken
 
-                    // --- PASO CLAVE: GUARDADO TEMPORAL MANUAL REEMPLAZADO ---
-                    // Usamos TokenManager.saveAuth para guardar el token (y que otros TokenManager lo lean desde prefs)
+                    // Guardamos token temporalmente para que el interceptor lo use en la siguiente llamada.
                     tokenManager.saveAuth(authToken, "", "", null)
 
                     // --- FASE 2: OBTENCIÓN DE DATOS (usando el servicio PRIVADO) ---
-                    // Ahora llamamos a createAuthService con 'requiresAuth = true'.
-                    // Esto creará un servicio que SÍ incluye el interceptor con el token.
                     val privateAuthService = RetrofitClient.createAuthService(this@MainActivity, requiresAuth = true)
                     val userProfile = withContext(Dispatchers.IO) {
-                        privateAuthService.getMe() // ¡Esta llamada ahora funcionará!
+                        privateAuthService.getMe() // obtenemos profile (incluye role)
                     }
 
                     // --- FASE 3: GUARDADO COMPLETO Y FORMAL ---
@@ -113,12 +108,11 @@ class MainActivity : AppCompatActivity() { // Activity principal de login
                         userEmail = userProfile.email ?: "",
                         role = userProfile.role
                     )
-                    // === NUEVO: guardar role si viene en el profile ===
                     userProfile.role?.let { tokenManager.saveRole(it) }
 
-                    // --- FASE 4: BIENVENIDA Y NAVEGACIÓN ---
+                    // --- FASE 4: BIENVENIDA Y NAVEGACIÓN SEGÚN ROL ---
                     Toast.makeText(this@MainActivity, "¡Bienvenido, ${userProfile.name}!", Toast.LENGTH_SHORT).show()
-                    goToHome() // Navegamos a Home
+                    navigateByRole(userProfile.role)
 
                 } catch (e: Exception) {
                     Log.e("MainActivity", "Login o GetProfile error", e)
@@ -132,9 +126,32 @@ class MainActivity : AppCompatActivity() { // Activity principal de login
         }
     }
 
-    private fun goToHome() { // Navegar a la pantalla de Home
-        val intent = Intent(this, HomeActivity::class.java) // Creamos el Intent explícito
-        startActivity(intent) // Lanzamos la nueva Activity
-        finish() // Cerramos la Activity actual para no volver con back
+    /**
+     * Navega a la Activity correspondiente según el role.
+     * - ADMIN -> AdminActivity
+     * - CLIENT / otro -> HomeActivity
+     *
+     * Limpia la pila de actividades para que no se pueda volver al login.
+     */
+    private fun navigateByRole(roleRaw: String?) {
+        val role = roleRaw?.trim()?.uppercase()
+        val destClass = if (role == "ADMIN" || role == "ROLE_ADMIN") {
+            AdminActivity::class.java
+        } else {
+            HomeActivity::class.java
+        }
+        val intent = Intent(this, destClass)
+        // Limpiamos la pila para que no puedan volver al login con back
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
+    }
+
+    // Deprecated goToHome kept for reference (no longer used)
+    @Suppress("unused")
+    private fun goToHome() {
+        val intent = Intent(this, HomeActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }
