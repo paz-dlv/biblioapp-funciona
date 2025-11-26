@@ -11,6 +11,8 @@ data class Product(
 
     val price: Double?,
 
+    val description: String?,
+
     val stock: Int?,
 
     val image: List<ProductImage>?
