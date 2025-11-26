@@ -81,4 +81,12 @@ object RetrofitClient { // Objeto singleton que expone métodos de fábrica
             .build()
         return retrofit(storeBaseUrl, client).create(CartService::class.java)
     }
+
+    fun createUserService(context: Context): UserService {
+        val tokenManager = TokenManager(context)
+        val client = baseOkHttpBuilder()
+            .addInterceptor(AuthInterceptor { tokenManager.getToken() })
+            .build()
+        return retrofit(storeBaseUrl, client).create(UserService::class.java)
+    }
 }

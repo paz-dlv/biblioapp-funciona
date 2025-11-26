@@ -36,6 +36,33 @@ class MainActivity : AppCompatActivity() { // Activity principal de login
 
         tokenManager = TokenManager(this) // Inicializamos TokenManager con contexto
 
+        // === NUEVO: si ya hay sesión, nos aseguramos de tener el role guardado antes de ir a Home ===
+        if (tokenManager.isLoggedIn()) { // Consultamos si hay token guardado
+            val existingRole = tokenManager.getRole()
+            if (!existingRole.isNullOrBlank()) {
+                // Ya tenemos role, podemos seguir directamente
+                goToHome()
+                return
+            } else {
+                // Si no tenemos role, intentamos obtener el perfil (requiere token)
+                lifecycleScope.launch {
+                    try {
+                        val privateAuthService = RetrofitClient.createAuthService(this@MainActivity, requiresAuth = true)
+                        val profile = withContext(Dispatchers.IO) {
+                            privateAuthService.getMe()
+                        }
+                        profile.role?.let { tokenManager.saveRole(it) }
+                    } catch (e: Exception) {
+                        Log.w("MainActivity", "No se pudo obtener role al iniciar: ${e.message}")
+                        // fallback a CLIENT si falla
+                        tokenManager.saveRole("CLIENT")
+                    } finally {
+                        goToHome()
+                    }
+                }
+                return // esperamos al launch para navegar
+            }
+        }
 
         // Listener para el link de registro:
         binding.tvSignUpLink.setOnClickListener {
@@ -94,9 +121,12 @@ class MainActivity : AppCompatActivity() { // Activity principal de login
                     // --- FASE 3: GUARDADO COMPLETO Y FORMAL ---
                     tokenManager.saveAuth(
                         token = authToken,
-                        userName = userProfile.name,
-                        userEmail = userProfile.email
+                        userName = userProfile.name ?: "",
+                        userEmail = userProfile.email ?: "",
+                        role = userProfile.role
                     )
+                    // === NUEVO: guardar role si viene en el profile ===
+                    userProfile.role?.let { tokenManager.saveRole(it) }
 
                     // --- FASE 4: BIENVENIDA Y NAVEGACIÓN ---
                     Toast.makeText(this@MainActivity, "¡Bienvenido, ${userProfile.name}!", Toast.LENGTH_SHORT).show()

@@ -2,7 +2,6 @@ package com.biblioapp.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.telecom.Call
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -11,16 +10,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.biblioapp.R
 import com.biblioapp.api.RetrofitClient
+import com.biblioapp.api.TokenManager
 import com.biblioapp.model.RegisterUserRequest
-import javax.security.auth.callback.Callback
 import com.biblioapp.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
 import org.json.JSONObject
 import retrofit2.Response
-
 
 class SignUpActivity : AppCompatActivity() {
 
@@ -34,6 +31,8 @@ class SignUpActivity : AppCompatActivity() {
         val addressEditText = findViewById<EditText>(R.id.etShippingAddress)
         val phoneEditText = findViewById<EditText>(R.id.etPhone)
         val signUpButton = findViewById<Button>(R.id.btnSignUp)
+
+        val tokenManager = TokenManager(this) // para guardar role/email si vienen
 
         signUpButton.setOnClickListener {
             val name = nameEditText.text.toString().trim()
@@ -65,6 +64,26 @@ class SignUpActivity : AppCompatActivity() {
                     Log.d("SignUp", "Response error: ${response.errorBody()?.string()}")
 
                     if (response.isSuccessful && response.body() != null) {
+                        val createdUser = response.body()!!
+
+                        // Guardar role si el backend lo devuelve (minimo cambio)
+                        try {
+                            createdUser.role?.let { role ->
+                                tokenManager.saveRole(role)
+                            }
+                        } catch (t: Throwable) {
+                            // Si TokenManager aún no tiene saveRole en tu versión, evitamos crash.
+                            Log.w("SignUp", "No se pudo guardar role en TokenManager: ${t.message}")
+                        }
+
+                        // Opcional: guardar el email/nombre en SharedPreferences (compatible con TokenManager existente)
+                        try {
+                            val prefs = getSharedPreferences("session", MODE_PRIVATE)
+                            prefs.edit().putString("user_name", createdUser.name).putString("user_email", createdUser.email).apply()
+                        } catch (t: Throwable) {
+                            Log.w("SignUp", "No se pudo guardar user info en prefs: ${t.message}")
+                        }
+
                         Toast.makeText(
                             this@SignUpActivity,
                             "Usuario registrado exitosamente. Ahora puedes iniciar sesión.",

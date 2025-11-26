@@ -1,20 +1,24 @@
 package com.biblioapp.model
 
 import com.google.gson.annotations.SerializedName
-
+import java.io.Serializable
 
 data class User(
-    @SerializedName("id")
-    val id: Int,
+    @SerializedName("id") val id: Int,
 
-    @SerializedName("name")
-    val name: String,
+    @SerializedName("created_at") val createdAt: Long?,
 
-    @SerializedName("email")
-    val email: String,
+    @SerializedName("name") val name: String?,
 
-    // El campo "created_at" también se puede incluir si lo necesitas
-    @SerializedName("created_at")
-    val createdAt: Long
-)
+    @SerializedName("email") val email: String?,
 
+    @SerializedName("lastname") val lastname: String?,
+
+    @SerializedName("status") val status: String?,
+
+    @SerializedName("shipping_address") val shippingAddress: String?,
+
+    @SerializedName("phone") val phone: String?,
+
+    @SerializedName("role") val role: String?
+) : Serializable
