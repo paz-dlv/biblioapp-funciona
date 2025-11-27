@@ -125,6 +125,17 @@
                     android:text="Precio"
                     android:layout_marginTop="8dp"/>
 
+                <!-- BOTÓN AÑADIR (añadido) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAdd"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Añadir"
+                    app:cornerRadius="10dp"
+                    app:backgroundTint="@color/pastel_pink_medium"
+                    android:textColor="@color/white" />
+
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

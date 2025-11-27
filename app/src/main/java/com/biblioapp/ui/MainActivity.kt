@@ -1,17 +1,12 @@
 package com.biblioapp.ui
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.biblioapp.R
 import com.biblioapp.api.RetrofitClient
 import com.biblioapp.api.TokenManager
 import com.biblioapp.databinding.ActivityMainBinding
@@ -19,7 +14,6 @@ import com.biblioapp.model.LoginRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.jvm.java
 
 class MainActivity : AppCompatActivity() { // Activity principal de login
 
@@ -48,7 +42,15 @@ class MainActivity : AppCompatActivity() { // Activity principal de login
                         val profile = withContext(Dispatchers.IO) {
                             privateAuthService.getMe()
                         }
+                        // DEBUG: muestra el profile recibido
+                        Log.d("MainActivity", "DEBUG userProfile (onStart): $profile")
+
+                        // Guardar role y user id si vienen en el profile
                         profile.role?.let { tokenManager.saveRole(it) }
+                        profile.id?.let {
+                            tokenManager.saveUserId(it)
+                            Log.d("MainActivity", "Saved user id (onStart): ${tokenManager.getUserId()}")
+                        }
                         navigateByRole(profile.role)
                     } catch (e: Exception) {
                         Log.w("MainActivity", "No se pudo obtener role al iniciar: ${e.message}")
@@ -101,16 +103,23 @@ class MainActivity : AppCompatActivity() { // Activity principal de login
                         privateAuthService.getMe() // obtenemos profile (incluye role)
                     }
 
+                    // DEBUG: muestra el profile recibido en el login flow
+                    Log.d("MainActivity", "DEBUG userProfile (onLogin): $userProfile")
+
                     // --- FASE 3: GUARDADO COMPLETO Y FORMAL ---
+                    // Usamos la versión unificada de saveAuth para guardar token + user info + userId en un solo paso
                     tokenManager.saveAuth(
                         token = authToken,
                         userName = userProfile.name ?: "",
                         userEmail = userProfile.email ?: "",
-                        role = userProfile.role
+                        role = userProfile.role,
+                        userId = userProfile.id
                     )
-                    userProfile.role?.let { tokenManager.saveRole(it) }
+
+                    // (No es necesario llamar a saveUserId o saveRole por separado aquí)
 
                     // --- FASE 4: BIENVENIDA Y NAVEGACIÓN SEGÚN ROL ---
+                    Log.d("MainActivity", "Saved user id (onLogin): ${tokenManager.getUserId()}")
                     Toast.makeText(this@MainActivity, "¡Bienvenido, ${userProfile.name}!", Toast.LENGTH_SHORT).show()
                     navigateByRole(userProfile.role)
 

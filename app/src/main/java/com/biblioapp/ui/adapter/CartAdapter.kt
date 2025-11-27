@@ -30,11 +30,9 @@ class CartAdapter(
 
             // Obtener ProductImage de forma segura
             val firstImage = item.product?.image?.firstOrNull()
-            // Priorizar url, y si es nulo usar path. Si 'path' es relativo, se antepone ApiConfig.storeBaseUrl
             val imageUrl = when {
                 !firstImage?.url.isNullOrBlank() -> firstImage?.url
                 !firstImage?.path.isNullOrBlank() -> {
-                    // Si path ya es una URL absoluta evita anteponer; aquí asumimos que "path" puede ser relativo
                     val path = firstImage!!.path
                     if (path.startsWith("http")) path else ApiConfig.storeBaseUrl.trimEnd('/') + "/" + path.trimStart('/')
                 }
@@ -46,7 +44,7 @@ class CartAdapter(
                 .centerCrop()
                 .placeholder(android.R.drawable.ic_menu_gallery)
                 .error(android.R.drawable.ic_dialog_alert)
-                .into(b.imgCover) // usa el id que tengas en item_cart.xml
+                .into(b.imgCover)
 
             b.btnPlus.setOnClickListener {
                 val wanted = item.quantity + 1
@@ -86,9 +84,11 @@ class CartAdapter(
 
     override fun getItemCount(): Int = items.size
 
+    // FIX: copia defensiva para evitar el self-aliasing bug cuando newList es la misma instancia que 'items'
     fun updateList(newList: List<CartItem>) {
+        val snapshot = ArrayList(newList) // copia de los datos de entrada
         items.clear()
-        items.addAll(newList)
+        items.addAll(snapshot)
         notifyDataSetChanged()
     }
 

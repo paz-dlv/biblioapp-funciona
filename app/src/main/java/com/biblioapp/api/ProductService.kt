@@ -17,7 +17,7 @@ interface ProductService {
     suspend fun getProducts(): List<Product>
 
     @GET("product/{product_id}")
-    suspend fun getProduct(@Path("product_id") productId: Int): Product
+    suspend fun getProduct(@Path("product_id") id: Int): Product
 
     @POST("product")
     suspend fun createProduct(@Body request: CreateProductRequest): CreateProductResponse

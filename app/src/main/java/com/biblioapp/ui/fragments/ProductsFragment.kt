@@ -12,9 +12,11 @@ import com.biblioapp.api.RetrofitClient
 import com.biblioapp.databinding.FragmentProductsBinding
 import com.biblioapp.model.Product
 import com.biblioapp.ui.adapter.ProductAdapter
+import com.biblioapp.data.CartHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.widget.Toast
 
 class ProductsFragment : Fragment() { // Fragment que lista y filtra productos
 
@@ -41,7 +43,21 @@ class ProductsFragment : Fragment() { // Fragment que lista y filtra productos
     }
 
     private fun setupRecycler() { // Inicializa RecyclerView con layout manager y adaptador
-        adapter = ProductAdapter() // Instanciamos adaptador simple
+        // PASO CLAVE: pasamos onAddClick para que el botón "Añadir" haga la acción de añadir al carrito
+        adapter = ProductAdapter(items = emptyList(), onAddClick = { product ->
+            // confirmamos visualmente y llamamos al helper en una corrutina del lifecycleOwner
+            viewLifecycleOwner.lifecycleScope.launch {
+                // opcional: Toast rápido para comprobar que el click funciona (puedes quitarlo después)
+                Toast.makeText(requireContext(), "Añadiendo ${product.title}...", Toast.LENGTH_SHORT).show()
+
+                // Llama al helper que crea cart (si no existe) y createCartItem
+                val ok = CartHelper.addProductToCart(requireContext(), product, 1)
+                if (ok) {
+                    // opcional: actualizar badge o UI; ejemplo:
+                    // (activity as? MainActivity)?.updateCartBadge()
+                }
+            }
+        })
         binding.recyclerProducts.layoutManager = LinearLayoutManager(requireContext()) // Lista vertical
         binding.recyclerProducts.adapter = adapter // Asociamos adaptador
     }

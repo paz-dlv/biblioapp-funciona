@@ -31,10 +31,6 @@
                 android:layout_height="match_parent"
                 android:padding="8dp" />
 
-            <include
-                android:id="@+id/viewEmpty"
-                layout="@layout/layout_empty_cart"
-                android:visibility="gone" />
 
         </FrameLayout>
 

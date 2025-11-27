@@ -14,34 +14,49 @@ class TokenManager(context: Context) { // Clase que encapsula el acceso a Shared
     var currentRole: String? = null
         private set
 
+    // Nuevo: user id en memoria
+    var currentUserId: Int? = null
+        private set
+
     init {
-        // Al iniciar, cargamos token y role desde las preferencias
+        // Al iniciar, cargamos token, role y userId desde las preferencias
         currentToken = prefs.getString(KEY_TOKEN, null)
         currentRole = prefs.getString(KEY_USER_ROLE, null)
+        val uid = prefs.getInt(KEY_USER_ID, -1)
+        currentUserId = if (uid != -1) uid else null
     }
 
     /**
      * Guarda token + userName + userEmail (compatible con tu método actual).
-     * Además acepta role opcional para guardar directamente.
+     * No cambié la firma original para mantener retrocompatibilidad.
      */
-    fun saveAuth(token: String, userName: String, userEmail: String, role: String? = null) {
-        currentToken = token // Actualizamos la variable en memoria
-        if (!role.isNullOrBlank()) {
-            currentRole = normalizeRole(role)
-        }
+    fun saveAuth(token: String, userName: String, userEmail: String, role: String? = null, userId: Int? = null) {
+        currentToken = token
+        if (!role.isNullOrBlank()) currentRole = normalizeRole(role)
+        if (userId != null) currentUserId = userId
+
         prefs.edit().apply {
             putString(KEY_TOKEN, token)
             putString(KEY_USER_NAME, userName)
             putString(KEY_USER_EMAIL, userEmail)
             putString(KEY_USER_ROLE, currentRole)
+            if (userId != null) putInt(KEY_USER_ID, userId) else remove(KEY_USER_ID)
             apply()
         }
     }
 
-    // Método separado para guardar solo el role (útil si lo obtienes posteriormente)
+    // Método nuevo y pequeño para guardar solo el user id (mínimo cambio)
+    fun saveUserId(userId: Int) {
+        currentUserId = userId
+        prefs.edit().putInt(KEY_USER_ID, userId).apply()
+
+    }
+
+    // Restauré este método que se llamaba desde MainActivity
     fun saveRole(role: String?) {
         currentRole = normalizeRole(role)
         prefs.edit().putString(KEY_USER_ROLE, currentRole).apply()
+
     }
 
     // El interceptor usará este método (devuelve el token en memoria si existe).
@@ -53,6 +68,9 @@ class TokenManager(context: Context) { // Clase que encapsula el acceso a Shared
     // Role accessors
     fun getRole(): String? = currentRole ?: prefs.getString(KEY_USER_ROLE, null)
 
+    // Nuevo: devuelve user id si existe
+    fun getUserId(): Int? = currentUserId ?: prefs.getInt(KEY_USER_ID, -1).let { if (it != -1) it else null }
+
     fun isLoggedIn(): Boolean = getToken() != null
 
     // Checks de role (normalizando mayúsculas/minúsculas)
@@ -62,6 +80,7 @@ class TokenManager(context: Context) { // Clase que encapsula el acceso a Shared
     fun clear() {
         currentToken = null
         currentRole = null
+        currentUserId = null
         prefs.edit().clear().apply()
     }
 
@@ -81,5 +100,6 @@ class TokenManager(context: Context) { // Clase que encapsula el acceso a Shared
         private const val KEY_USER_NAME = "user_name"
         private const val KEY_USER_EMAIL = "user_email"
         private const val KEY_USER_ROLE = "user_role"
+        private const val KEY_USER_ID = "user_id" // nuevo
     }
 }

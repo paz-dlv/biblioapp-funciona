@@ -9,6 +9,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.biblioapp.api.RetrofitClient
+import com.biblioapp.api.TokenManager
+import com.biblioapp.data.CartManager
 import com.biblioapp.databinding.ActivityCartBinding
 import com.biblioapp.model.Cart
 import com.biblioapp.model.CartItem
@@ -49,28 +51,54 @@ class CartActivity : AppCompatActivity(), CartAdapter.Listener {
         loadCartAndItems()
     }
 
+    // Reemplaza la función loadCartAndItems en CartActivity por esta versión
     private fun loadCartAndItems() {
         showLoading(true)
         lifecycleScope.launch {
             try {
                 val service = RetrofitClient.createCartService(this@CartActivity)
-                // Primero intentamos obtener carts (si el backend asocia carts al usuario)
+                val tokenManager = TokenManager(this@CartActivity)
+                val currentUserId = tokenManager.getUserId()
+
+                // 1) Si hay un cartId guardado, usarlo inmediatamente (prioridad)
+                val savedId = CartManager.getCartId(this@CartActivity)
+                if (savedId != null) {
+                    android.util.Log.d("CartActivity", "Using saved cart id (priority) = $savedId")
+                    currentCart = null // no tenemos el objeto completo, pero usaremos savedId
+                    loadItemsForCart(savedId)
+                    return@launch
+                }
+
+                // 2) Si no hay savedId, intentamos obtener carts asociados al usuario/back-end
                 val carts = try {
                     service.getCarts(null)
                 } catch (e: Exception) {
                     emptyList<Cart>()
                 }
-                if (carts.isNotEmpty()) {
-                    currentCart = carts.first()
+                android.util.Log.d("CartActivity", "getCarts returned ${carts.size} entries: $carts")
+
+                // Buscar cart que pertenezca al usuario actual
+                val userCart = if (currentUserId != null) {
+                    carts.firstOrNull { it.user_id == currentUserId }
+                } else null
+
+                if (userCart != null) {
+                    currentCart = userCart
+                    currentCart?.id?.let { CartManager.saveCartId(this@CartActivity, it) }
                     loadItemsForCart(currentCart!!.id)
                 } else {
-                    // fallback: intentar obtener items sin cartId
+                    // fallback: no savedId ni userCart -> intentar obtener items sin cartId
                     loadItemsForCart(null)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                // fallback a obtener items sin cart id
-                loadItemsForCart(null)
+                val savedIdFallback = CartManager.getCartId(this@CartActivity)
+                if (savedIdFallback != null) {
+                    android.util.Log.d("CartActivity", "loadCartAndItems fallback using savedId = $savedIdFallback")
+                    loadItemsForCart(savedIdFallback)
+                } else {
+                    loadItemsForCart(null)
+                }
             }
         }
     }
@@ -106,8 +134,6 @@ class CartActivity : AppCompatActivity(), CartAdapter.Listener {
     }
 
     private fun showEmpty(empty: Boolean) {
-        // Accedemos a la vista raíz del binding incluido
-        binding.viewEmpty.root.visibility = if (empty) View.VISIBLE else View.GONE
         binding.rvCart.visibility = if (empty) View.GONE else View.VISIBLE
         binding.summaryContainer.visibility = if (empty) View.GONE else View.VISIBLE
     }
@@ -125,14 +151,12 @@ class CartActivity : AppCompatActivity(), CartAdapter.Listener {
     }
 
     override fun onQuantityChanged(item: CartItem, newQty: Int) {
-        // Actualizar en backend
         lifecycleScope.launch {
             try {
                 val service = RetrofitClient.createCartService(this@CartActivity)
                 val updated = withContext(Dispatchers.IO) {
                     service.updateCartItem(item.id, UpdateCartItemRequest(quantity = newQty))
                 }
-                // actualizar localmente
                 val idx = items.indexOfFirst { it.id == item.id }
                 if (idx >= 0) {
                     items[idx] = updated
@@ -147,7 +171,6 @@ class CartActivity : AppCompatActivity(), CartAdapter.Listener {
     }
 
     override fun onRemove(item: CartItem) {
-        // Confirmar y llamar delete
         AlertDialog.Builder(this)
             .setTitle("Eliminar")
             .setMessage("¿Eliminar '${item.product?.title ?: "este ítem"}' del carrito?")
@@ -183,8 +206,6 @@ class CartActivity : AppCompatActivity(), CartAdapter.Listener {
                 val pos = vh.bindingAdapterPosition
                 if (pos != RecyclerView.NO_POSITION) {
                     val item = items[pos]
-                    // revert swipe until user confirms
-                    // mostramos dialog y si cancela restablecemos
                     AlertDialog.Builder(this@CartActivity)
                         .setTitle("Eliminar")
                         .setMessage("¿Eliminar '${item.product?.title ?: "este ítem"}' del carrito?")
@@ -217,7 +238,6 @@ class CartActivity : AppCompatActivity(), CartAdapter.Listener {
         ItemTouchHelper(simpleCallback).attachToRecyclerView(binding.rvCart)
     }
 
-    // Coupon simple: DISCOUNT10 => 10% off
     private fun applyCoupon() {
         val code = binding.etCoupon.text.toString().trim()
         if (code.isEmpty()) {
@@ -236,12 +256,12 @@ class CartActivity : AppCompatActivity(), CartAdapter.Listener {
             val shipping = if (subtotal - discount > 0) SHIPPING else 0.0
             val total = subtotal - discount + tax + shipping
 
-            binding.tvSubtotal.text = String.format("$%.2f", subtotal - discount)
-            binding.tvTax.text = String.format("$%.2f", tax)
-            binding.tvShipping.text = String.format("$%.2f", shipping)
-            binding.tvTotal.text = String.format("$%.2f", total)
+            binding.tvSubtotal.text = String.format("$%.3f", subtotal - discount)
+            binding.tvTax.text = String.format("$%.3f", tax)
+            binding.tvShipping.text = String.format("$%.3f", shipping)
+            binding.tvTotal.text = String.format("$%.3f", total)
 
-            Toast.makeText(this, "Cupón aplicado: -${String.format("$%.2f", discount)}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Cupón aplicado: -${String.format("$%.3f", discount)}", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "Cupón inválido", Toast.LENGTH_SHORT).show()
         }
@@ -261,14 +281,25 @@ class CartActivity : AppCompatActivity(), CartAdapter.Listener {
                     try {
                         // Payload simple usando ids y qty
                         val payloadItems = items.map { mapOf("id" to it.id, "quantity" to it.quantity) }
+
+                        // Si no tienes endpoint de orders en backend aún, hacemos limpieza local:
                         withContext(Dispatchers.IO) {
-                            // Si quieres hacer una llamada real, usa createCart/createCartItem/checkout endpoint según tu API.
-                            // Aquí hacemos una simulación local: podrías llamar a un endpoint si existe.
+                            // Intentamos eliminar cada cart_item del backend
+                            val service = RetrofitClient.createCartService(this@CartActivity)
+                            items.forEach {
+                                try { service.deleteCartItem(it.id) } catch (_: Exception) { }
+                            }
+                            // Intentamos borrar cart si existe
+                            try { currentCart?.let { service.deleteCart(it.id) } } catch (_: Exception) { }
                         }
-                        Toast.makeText(this@CartActivity, "Compra realizada (simulada). Gracias.", Toast.LENGTH_LONG).show()
+
+                        // limpia UI local, prefs y badge
                         items.clear()
                         adapter.updateList(items)
                         showEmpty(true)
+                        CartManager.clearCartId(this@CartActivity)
+
+                        Toast.makeText(this@CartActivity, "Compra realizada (simulada). Gracias.", Toast.LENGTH_LONG).show()
                     } catch (e: Exception) {
                         e.printStackTrace()
                         Toast.makeText(this@CartActivity, "Error en el checkout", Toast.LENGTH_SHORT).show()

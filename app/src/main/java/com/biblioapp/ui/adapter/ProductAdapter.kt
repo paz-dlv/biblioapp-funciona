@@ -10,7 +10,9 @@ import com.biblioapp.model.Product
 import com.biblioapp.ui.ProductDetailActivity
 
 class ProductAdapter(
-    private var items: List<Product> = emptyList()
+    private var items: List<Product> = emptyList(),
+    // parámetro nuevo opcional para manejar "Añadir" sin romper llamadas existentes
+    private val onAddClick: (Product) -> Unit = {}
 ) : RecyclerView.Adapter<ProductAdapter.VH>() {
 
     // ViewHolder interno con referencia al ViewBinding del item
@@ -51,6 +53,15 @@ class ProductAdapter(
         holder.binding.tvDescription.text = product.description ?: ""
         holder.binding.tvPrice.text = "Precio: S/ ${product.price}"
         holder.binding.tvStock?.text = "Stock: ${product.stock}"
+
+        // 4. Conectar el botón Añadir (si existe en el binding) al callback
+        try {
+            holder.binding.btnAdd.setOnClickListener {
+                onAddClick(product)
+            }
+        } catch (e: Exception) {
+            // Si por alguna razón btnAdd no existe en binding (error de binding), no hacemos nada.
+        }
     }
 
     override fun getItemCount(): Int = items.size
