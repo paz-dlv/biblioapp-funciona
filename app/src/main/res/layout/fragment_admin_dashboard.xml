@@ -1,52 +1,233 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="20dp"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fillViewport="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/pastel_bg">
 
-    <TextView
-        android:id="@+id/tvWelcome"
-        android:text="Panel de administración"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:id="@+id/tvInfo"
-        android:text="Usuario: \nRol:"
-        android:layout_marginTop="12dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <!-- Estadísticas de ejemplo -->
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_marginTop="20dp"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="28dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/tvStatsProducts"
-            android:text="Productos: 0"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content" />
+        <!-- Perfil: tarjeta grande -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="14dp"
+            app:cardUseCompatPadding="true"
+            app:strokeColor="@color/pastel_pink_medium"
+            app:strokeWidth="1dp"
+            app:cardBackgroundColor="@color/pastel_card"
+            android:layout_marginBottom="16dp">
 
-        <TextView
-            android:id="@+id/tvStatsOrders"
-            android:text="Pedidos: 0"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="20dp"
+                android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/tvStatsUsers"
-            android:text="Usuarios: 0"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content" />
+                <FrameLayout
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:layout_marginEnd="18dp">
+
+                    <ImageView
+                        android:id="@+id/ivProfileAvatar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_user_avatar"
+                        android:scaleType="centerCrop"
+                        android:contentDescription="Avatar"
+                        android:background="@drawable/circle_avatar_bg" />
+
+                </FrameLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tvProfileName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Administrador"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/textPrimary" />
+
+                    <TextView
+                        android:id="@+id/tvProfileEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="admin@example.com"
+                        android:textSize="14sp"
+                        android:textColor="@color/textSecondary"
+                        android:layout_marginTop="6dp" />
+
+                    <TextView
+                        android:id="@+id/tvProfileRole"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ADMIN"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/textSecondary"
+                        android:layout_marginTop="10dp" />
+
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Botón Cerrar sesión -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogoutProfile"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="@string/logout"
+            android:layout_marginTop="4dp"
+            style="@style/Widget.MaterialComponents.Button"
+            app:backgroundTint="@color/pastel_pink_strong"
+            app:strokeColor="@color/pastel_pink_medium"
+            app:cornerRadius="16dp"
+            android:textColor="@color/white" />
+
+        <!-- Separador -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="26dp" />
+
+        <!-- Estadísticas -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="3"
+            android:gravity="center"
+            android:layout_marginTop="2dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="120dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="10dp"
+                app:cardUseCompatPadding="true"
+                app:cardBackgroundColor="@color/pastel_card_light"
+                android:layout_marginEnd="10dp"
+                android:padding="12dp">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tvStatsProducts"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Productos"
+                        android:textSize="13sp"
+                        android:textColor="@color/textSecondary" />
+
+                    <TextView
+                        android:id="@+id/tvStatsProductsValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/textPrimary"
+                        android:layout_marginTop="10dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="120dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="10dp"
+                app:cardUseCompatPadding="true"
+                app:cardBackgroundColor="@color/pastel_card_light"
+                android:layout_marginEnd="10dp"
+                android:padding="12dp">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tvStatsOrders"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pedidos"
+                        android:textSize="13sp"
+                        android:textColor="@color/textSecondary" />
+
+                    <TextView
+                        android:id="@+id/tvStatsOrdersValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/textPrimary"
+                        android:layout_marginTop="10dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="120dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="10dp"
+                app:cardUseCompatPadding="true"
+                app:cardBackgroundColor="@color/pastel_card_light"
+                android:padding="12dp">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tvStatsUsers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Usuarios"
+                        android:textSize="13sp"
+                        android:textColor="@color/textSecondary" />
+
+                    <TextView
+                        android:id="@+id/tvStatsUsersValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/textPrimary"
+                        android:layout_marginTop="10dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <View android:layout_width="match_parent" android:layout_height="28dp" />
+
     </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

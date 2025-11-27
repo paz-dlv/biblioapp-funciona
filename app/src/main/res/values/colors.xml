@@ -16,8 +16,6 @@
     <!-- Colores personalizados para vistas suaves y modernas -->
     <color name="colorBackground">#F5F7FA</color>
     <color name="cardColor">#BB86FC</color>
-    <color name="textPrimary">#374151</color>
-    <color name="textSecondary">#6B7280</color>
     <color name="buttonColor">#A7F3D0</color>
     <color name="textButton">#065F46</color>
     <color name="bottom_nav_icon_color">#6750A4</color>
@@ -33,4 +31,20 @@
 
     <!-- Color para el círculo detrás del usuario -->
     <color name="userCircleBg">#6750A4</color>
+
+    <!-- Fondo general suave -->
+    <color name="pastel_bg">#FFF6FA</color>
+
+    <!-- Paleta rosa pastel -->
+    <color name="pastel_card">#FFF0F7</color>
+    <color name="pastel_card_light">#FFEDF6</color>
+    <color name="pastel_pink_medium">#FFCCD9</color>
+    <color name="pastel_pink_strong">#FFA6C6</color>
+
+    <!-- Texto -->
+    <color name="textPrimary">#3B2B2B</color>
+    <color name="textSecondary">#7A6F76</color>
+
+    <!-- Accento más fuerte para barras/toolbar (opcional) -->
+    <color name="pastel_toolbar">#D89CE0</color>
 </resources>

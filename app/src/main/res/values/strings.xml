@@ -66,4 +66,5 @@
 
     <!-- Otros -->
     <string name="placeholder_image_desc">Imagen de producto</string>
+    <string name="logout">Cerrar sesión</string>
 </resources>
