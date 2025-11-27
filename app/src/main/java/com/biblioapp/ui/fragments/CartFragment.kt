@@ -36,6 +36,10 @@ class CartFragment : Fragment(), CartAdapter.Listener {
     private val items = mutableListOf<CartItem>()
     private var currentCart: Cart? = null
 
+    // Totals config
+    private val TAX_RATE = 0.05
+    private val SHIPPING = 4.99
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCartBinding.inflate(inflater, container, false)
         return binding.root
@@ -55,8 +59,9 @@ class CartFragment : Fragment(), CartAdapter.Listener {
 
         loadCartAndItems()
 
+        // Hook checkout button to simulation
         binding.btnCheckout.setOnClickListener {
-            Toast.makeText(requireContext(), "Finalizar compra (implementa checkout)", Toast.LENGTH_SHORT).show()
+            simulateCheckout()
         }
     }
 
@@ -255,6 +260,88 @@ class CartFragment : Fragment(), CartAdapter.Listener {
             }
             .setNegativeButton("No", null)
             .show()
+    }
+
+    // --- Checkout simulation functions ---
+
+    // small data holder since Kotlin stdlib doesn't have a Quadruple
+    private data class Quadruple<A,B,C,D>(val a:A, val b:B, val c:C, val d:D)
+
+    private fun calcTotals(): Quadruple<Double, Double, Double, Double> {
+        val subtotal = items.sumOf { (it.product?.price ?: 0.0) * it.quantity }
+        val tax = subtotal * TAX_RATE
+        val shipping = if (subtotal > 0) SHIPPING else 0.0
+        val total = subtotal + tax + shipping
+        return Quadruple(subtotal, tax, shipping, total)
+    }
+
+    private fun simulateCheckout() {
+        if (items.isEmpty()) {
+            Toast.makeText(requireContext(), "Carrito vacío", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val (subtotal, tax, shipping, total) = calcTotals()
+
+        val message = StringBuilder().apply {
+            append("Subtotal: ${String.format("$%.2f", subtotal)}\n")
+            append("Impuestos: ${String.format("$%.2f", tax)}\n")
+            append("Envío: ${String.format("$%.2f", shipping)}\n\n")
+            append("Total: ${String.format("$%.2f", total)}\n\n")
+            append("¿Deseas simular el pago y vaciar el carrito?")
+        }.toString()
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Confirmar pago")
+            .setMessage(message)
+            .setPositiveButton("Pagar") { _, _ -> performSimulatedPayment() }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    private fun performSimulatedPayment() {
+        binding.btnCheckout.isEnabled = false
+        Toast.makeText(requireContext(), "Procesando pago...", Toast.LENGTH_SHORT).show()
+
+        lifecycleScope.launch {
+            try {
+                val service = RetrofitClient.createCartService(requireContext())
+
+                // Make a snapshot of IDs to avoid concurrent modification
+                val idsToDelete = items.map { it.id }
+
+                // Delete sequentially on IO dispatcher (reliable)
+                withContext(Dispatchers.IO) {
+                    idsToDelete.forEach { id ->
+                        try {
+                            service.deleteCartItem(id)
+                        } catch (e: Exception) {
+                            Log.w(TAG, "deleteCartItem($id) failed: ${e.message}")
+                        }
+                    }
+                }
+
+                // Clear local state
+                items.clear()
+                adapter.updateList(items)
+                showEmpty(true)
+
+                // Clear saved cart id if your CartManager supports it
+                try {
+                    CartManager.clearCartId(requireContext())
+                } catch (e: Exception) {
+                    Log.w(TAG, "CartManager.clearCartId not available or failed: ${e.message}")
+                }
+
+                Toast.makeText(requireContext(), "Compra simulada realizada. Gracias.", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                Log.e(TAG, "performSimulatedPayment error: ${e.message}", e)
+                Toast.makeText(requireContext(), "Error al procesar pago simulado", Toast.LENGTH_SHORT).show()
+                fetchAndShowItems(currentCart?.id ?: CartManager.getCartId(requireContext()))
+            } finally {
+                binding.btnCheckout.isEnabled = true
+            }
+        }
     }
 
     override fun onDestroyView() {
