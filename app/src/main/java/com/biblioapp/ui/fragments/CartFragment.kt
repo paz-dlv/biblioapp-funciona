@@ -18,6 +18,7 @@ import com.biblioapp.databinding.FragmentCartBinding
 import com.biblioapp.model.Cart
 import com.biblioapp.model.CartItem
 import com.biblioapp.model.Product
+import com.biblioapp.model.UpdateCartItemRequest
 import com.biblioapp.ui.adapter.CartAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -43,12 +44,10 @@ class CartFragment : Fragment(), CartAdapter.Listener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // RecyclerView setup (id: rvCartItems)
         adapter = CartAdapter(items, this)
         binding.rvCartItems.layoutManager = LinearLayoutManager(requireContext())
         binding.rvCartItems.adapter = adapter
 
-        // Initial UI state
         binding.tvEmpty.visibility = View.VISIBLE
         binding.tvEmpty.text = "Cargando..."
         binding.rvCartItems.visibility = View.GONE
@@ -61,6 +60,7 @@ class CartFragment : Fragment(), CartAdapter.Listener {
         }
     }
 
+    // Carga inicial: decide cart guardado o buscar carts del backend
     private fun loadCartAndItems() {
         lifecycleScope.launch {
             try {
@@ -102,49 +102,43 @@ class CartFragment : Fragment(), CartAdapter.Listener {
     }
 
     /**
-     * Fetch cart_items and populate Product if available:
-     * - If API returned product directly (product), use it.
-     * - Else if API returned _product (array), use the first element.
-     * - Else try to fetch product by id via ProductService (if available).
+     * Trae cart_items y asegura product en cada item:
+     * - usa product si vino embebido
+     * - usa _product.first si Xano devolvió _product
+     * - si falta, intenta obtener products por id via ProductService
      */
     private fun fetchAndShowItems(cartId: Int?) {
         lifecycleScope.launch {
             try {
                 val cartService = RetrofitClient.createCartService(requireContext())
                 val rawItems = withContext(Dispatchers.IO) { cartService.getCartItems(cartId) }
-                Log.d(TAG, "GET /cart_item?cart_id=$cartId returned ${rawItems.size} items: $rawItems")
+                Log.d(TAG, "GET /cart_item?cart_id=$cartId returned ${rawItems.size} items")
 
                 if (rawItems.isEmpty()) {
-                    adapter.updateList(emptyList())
+                    items.clear()
+                    adapter.updateList(items)
                     showEmpty(true)
                     binding.btnCheckout.visibility = View.GONE
                     return@launch
                 }
 
-                // First pass: use product or _product if present
                 val initialMerge: List<CartItem> = rawItems.map { ci ->
                     val embedded = ci.product ?: ci._product?.firstOrNull()
                     if (embedded != null) ci.copy(product = embedded) else ci
                 }
 
-                // Find which product_ids still missing product data
                 val missingIds = initialMerge.filter { it.product == null }.map { it.product_id }.distinct()
                 val finalList: List<CartItem> = if (missingIds.isEmpty()) {
                     initialMerge
                 } else {
-                    // Try to fetch products by id (if ProductService exists)
-                    val productService: ProductService? = try {
-                        RetrofitClient.createProductService(requireContext())
-                    } catch (e: Exception) {
+                    val productService: ProductService? = try { RetrofitClient.createProductService(requireContext()) } catch (e: Exception) {
                         Log.w(TAG, "createProductService not available: ${e.message}")
                         null
                     }
 
                     if (productService == null) {
-                        // fallback: keep initialMerge (will show placeholders)
                         initialMerge
                     } else {
-                        // fetch products concurrently
                         val productsMap = mutableMapOf<Int, Product?>()
                         withContext(Dispatchers.IO) {
                             missingIds.map { id ->
@@ -159,7 +153,6 @@ class CartFragment : Fragment(), CartAdapter.Listener {
                                 }
                             }.awaitAll()
                         }
-                        // Merge into final list
                         initialMerge.map { ci ->
                             if (ci.product != null) ci else {
                                 val p = productsMap[ci.product_id]
@@ -169,20 +162,17 @@ class CartFragment : Fragment(), CartAdapter.Listener {
                     }
                 }
 
-                // Update adapter with final list
                 items.clear()
                 items.addAll(finalList)
                 adapter.updateList(items)
 
-                // Debug logs
                 Log.d(TAG, "AFTER updateList -> adapter.itemCount = ${adapter.itemCount}")
                 binding.rvCartItems.post {
                     Log.d(TAG, "RV state: visibility=${binding.rvCartItems.visibility} height=${binding.rvCartItems.height} childCount=${binding.rvCartItems.childCount}")
                 }
 
-                showEmpty(finalList.isEmpty())
-                binding.btnCheckout.visibility = if (finalList.isNotEmpty()) View.VISIBLE else View.GONE
-
+                showEmpty(items.isEmpty())
+                binding.btnCheckout.visibility = if (items.isNotEmpty()) View.VISIBLE else View.GONE
             } catch (e: Exception) {
                 Log.e(TAG, "fetchAndShowItems error: ${e.message}", e)
                 showEmpty(true)
@@ -203,33 +193,58 @@ class CartFragment : Fragment(), CartAdapter.Listener {
         }
     }
 
+    /**
+     * Actualiza cantidad en backend y preserva el objeto product embebido
+     * (el servidor suele devolver solo id/quantity; por eso hacemos merge)
+     */
     override fun onQuantityChanged(item: CartItem, newQty: Int) {
         Log.d(TAG, "onQuantityChanged item=${item.id} newQty=$newQty")
-        // Implementar update si hace falta (puedes llamar a updateCartItem)
+        lifecycleScope.launch {
+            try {
+                val service = RetrofitClient.createCartService(requireContext())
+                val updated = withContext(Dispatchers.IO) {
+                    service.updateCartItem(item.id, UpdateCartItemRequest(quantity = newQty))
+                }
+
+                val idx = items.indexOfFirst { it.id == updated.id }
+                if (idx >= 0) {
+                    val existing = items[idx]
+                    val merged = when {
+                        updated.product != null -> updated
+                        existing.product != null -> updated.copy(product = existing.product, _product = existing._product)
+                        existing._product != null -> updated.copy(product = existing._product.firstOrNull(), _product = existing._product)
+                        else -> updated
+                    }
+                    items[idx] = merged
+                    adapter.updateList(items)
+                } else {
+                    fetchAndShowItems(currentCart?.id ?: CartManager.getCartId(requireContext()))
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "No se pudo actualizar cantidad en backend: ${e.message}", e)
+                Toast.makeText(requireContext(), "No se pudo actualizar la cantidad", Toast.LENGTH_SHORT).show()
+                fetchAndShowItems(currentCart?.id ?: CartManager.getCartId(requireContext()))
+            }
+        }
     }
 
     override fun onRemove(item: CartItem) {
-        // Implement deletion from backend and update UI
         AlertDialog.Builder(requireContext())
             .setTitle("Eliminar")
             .setMessage("¿Eliminar '${item.product?.title ?: "este ítem"}' del carrito?")
             .setPositiveButton("Sí") { _, _ ->
-                // perform deletion
                 lifecycleScope.launch {
                     try {
                         withContext(Dispatchers.IO) {
                             val service = RetrofitClient.createCartService(requireContext())
                             service.deleteCartItem(item.id)
                         }
-                        // Remove locally
                         val idx = items.indexOfFirst { it.id == item.id }
                         if (idx >= 0) {
                             items.removeAt(idx)
-                            // adapter has defensive updateList; update data and UI
                             adapter.updateList(items)
                         }
                         Toast.makeText(requireContext(), "Ítem eliminado", Toast.LENGTH_SHORT).show()
-                        // Update empty state and checkout visibility
                         showEmpty(items.isEmpty())
                         binding.btnCheckout.visibility = if (items.isNotEmpty()) View.VISIBLE else View.GONE
                     } catch (e: Exception) {

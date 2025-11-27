@@ -24,7 +24,11 @@ class CartAdapter(
         fun bind(item: CartItem) {
             b.tvTitle.text = item.product?.title ?: "Sin título"
             b.tvAuthor.text = item.product?.author ?: ""
-            b.tvPrice.text = String.format("$%.2f", item.product?.price ?: 0.0)
+            // Mostrar precio TOTAL de la fila (unitPrice * qty)
+            val unitPrice = item.product?.price ?: 0.0
+            val totalPrice = unitPrice * item.quantity
+            b.tvPrice.text = String.format("$%.2f", totalPrice)
+
             b.tvQty.text = item.quantity.toString()
             b.tvStock.text = "En stock: ${item.product?.stock ?: 0}"
 
@@ -54,6 +58,8 @@ class CartAdapter(
                 } else {
                     item.quantity = wanted
                     b.tvQty.text = item.quantity.toString()
+                    // actualizamos la UI localmente (price mostrado depende de quantity)
+                    b.tvPrice.text = String.format("$%.2f", (item.product?.price ?: 0.0) * item.quantity)
                     listener.onQuantityChanged(item, item.quantity)
                 }
             }
@@ -64,6 +70,7 @@ class CartAdapter(
                 } else {
                     item.quantity = wanted
                     b.tvQty.text = item.quantity.toString()
+                    b.tvPrice.text = String.format("$%.2f", (item.product?.price ?: 0.0) * item.quantity)
                     listener.onQuantityChanged(item, item.quantity)
                 }
             }
@@ -84,9 +91,9 @@ class CartAdapter(
 
     override fun getItemCount(): Int = items.size
 
-    // FIX: copia defensiva para evitar el self-aliasing bug cuando newList es la misma instancia que 'items'
+    // copia defensiva para evitar aliasing
     fun updateList(newList: List<CartItem>) {
-        val snapshot = ArrayList(newList) // copia de los datos de entrada
+        val snapshot = ArrayList(newList)
         items.clear()
         items.addAll(snapshot)
         notifyDataSetChanged()
