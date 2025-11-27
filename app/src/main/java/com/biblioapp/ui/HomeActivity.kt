@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import com.biblioapp.api.TokenManager
 import com.biblioapp.databinding.ActivityHomeBinding
 import com.biblioapp.ui.fragments.AddProductFragment
+import com.biblioapp.ui.fragments.CartFragment
 import com.biblioapp.ui.fragments.ProductsFragment
 import com.biblioapp.ui.fragments.ProfileFragment
 
@@ -27,7 +28,7 @@ class HomeActivity : AppCompatActivity() { // Declaramos la Activity Home, que g
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 com.biblioapp.R.id.nav_products -> replaceFragment(ProductsFragment()) // Ir a productos
-                com.biblioapp.R.id.nav_add -> replaceFragment(AddProductFragment()) // Ir a agregar producto
+                com.biblioapp.R.id.nav_cart -> replaceFragment(CartFragment()) // Ir a agregar producto
                 com.biblioapp.R.id.nav_profile -> replaceFragment(ProfileFragment()) // Ir a perfil
             }
             true // Devolvemos true para indicar que el evento fue manejado
