@@ -64,6 +64,10 @@
     <string name="cart_item_delete_error">No se pudo eliminar el ítem</string>
     <string name="cart_item_delete_error_toast">Error al eliminar</string>
 
-    <!-- Otros -->
+    <!-- Otros / Admin-->
     <string name="placeholder_image_desc">Imagen de producto</string>
+    <string name="admin_title">Panel de administración</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="admin_default_name">Administrador</string>
+    <string name="admin_panel_title">Panel de administración</string>
 </resources>

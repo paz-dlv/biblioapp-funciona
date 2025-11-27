@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shape para círculos (usada como shapeAppearanceOverlay en ShapeableImageView) -->
+    <style name="ShapeAppearance.Circle" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <!-- 50% produce un círculo en vistas cuadradas -->
+        <item name="cornerSize">50%</item>
+    </style>
+</resources>

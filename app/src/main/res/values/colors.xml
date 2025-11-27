@@ -4,33 +4,59 @@
     <color name="md_theme_background">#FFFBFE</color>
     <color name="md_theme_onBackground">#1C1B1F</color>
 
+    <!-- Paleta primaria / onPrimary -->
+    <color name="md_theme_primary">#6750A4</color>
+    <color name="md_theme_onPrimary">#FFFFFF</color>
+
     <!-- Colores por defecto que algunas plantillas esperan -->
     <color name="purple_200">#BB86FC</color>
     <color name="purple_500">#6200EE</color>
     <color name="purple_700">#3700B3</color>
     <color name="teal_200">#03DAC5</color>
+
+    <!-- Neutros -->
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
-    <color name="loginBackground">#E5D9F7</color>
 
-    <!-- Colores personalizados para vistas suaves y modernas -->
+    <!-- Valores específicos de la app / UI -->
+    <color name="loginBackground">#E5D9F7</color>
     <color name="colorBackground">#F5F7FA</color>
     <color name="cardColor">#BB86FC</color>
+
+    <!-- Textos -->
     <color name="textPrimary">#374151</color>
     <color name="textSecondary">#6B7280</color>
+
+    <!-- Botones y estados -->
     <color name="buttonColor">#A7F3D0</color>
     <color name="textButton">#065F46</color>
+
+    <!-- Bottom nav (si usas selector, pon el selector en res/color) -->
     <color name="bottom_nav_icon_color">#6750A4</color>
     <color name="bottom_nav_text_color">#FFFFFF</color>
-    <color name="md_theme_primary">#6750A4</color>
-    <color name="md_theme_onPrimary">#FFFFFF</color>
 
-    <!-- Colores para login moderno con magenta -->
+    <!-- Alias / compatibilidad (puedes eliminar uno si unificas nombres) -->
     <color name="colorPrimary">#E5D9F7</color>
+
+    <!-- EditText -->
     <color name="editTextBg">#FFFFFF</color>
     <color name="focusedEditTextBg">#FFE3F9</color>
     <color name="editTextStroke">#E5D9F7</color>
 
-    <!-- Color para el círculo detrás del usuario -->
+    <!-- Color para el círculo detrás del usuario (avatar) -->
     <color name="userCircleBg">#6750A4</color>
+
+
+    <color name="pastel_bg">#FFF6FA</color>
+
+    <!-- Paleta rosa pastel -->
+    <color name="pastel_pink_light">#FFF6FB</color>
+    <color name="pastel_card_light">#FFEDF6</color>
+    <color name="pastel_pink_medium">#FFCCD9</color>
+    <color name="pastel_pink_strong">#FFA6C6</color>
+
+
+    <!-- Un color suave para el perfil principal (card) -->
+    <color name="pastel_card">#FFF0F7</color>
+
 </resources>
