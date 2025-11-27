@@ -1,5 +1,6 @@
 package com.biblioapp.ui.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.biblioapp.api.RetrofitClient
 import com.biblioapp.databinding.FragmentProductsBinding
 import com.biblioapp.model.Product
+import com.biblioapp.ui.ProductDetailActivity
 import com.biblioapp.ui.adapter.ProductAdapter
 import com.biblioapp.data.CartHelper
 import kotlinx.coroutines.Dispatchers
@@ -18,92 +20,103 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.widget.Toast
 
-class ProductsFragment : Fragment() { // Fragment que lista y filtra productos
+class ProductsFragment : Fragment() {
 
-    private var _binding: FragmentProductsBinding? = null // Backing field opcional para ViewBinding
-    private val binding get() = _binding!! // Exponemos binding no-null dentro del ciclo de vida de la vista
+    private var _binding: FragmentProductsBinding? = null
+    private val binding get() = _binding!!
 
-    private lateinit var adapter: ProductAdapter // Adaptador de productos
-    private var allProducts: List<Product> = emptyList() // Cache local de todos los productos
+    private lateinit var adapter: ProductAdapter
+    private var allProducts: List<Product> = emptyList()
 
-    override fun onCreateView( // Inflamos la vista del fragment
-        inflater: LayoutInflater, // Inflater para convertir XML en Views
-        container: ViewGroup?, // Contenedor padre
-        savedInstanceState: Bundle? // Estado guardado
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentProductsBinding.inflate(inflater, container, false) // Inflamos con ViewBinding
-        return binding.root // Devolvemos la raíz de la vista
+        _binding = FragmentProductsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) { // Vista creada: configuramos UI y carga
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupRecycler() // Preparamos RecyclerView
-        setupSearch() // Configuramos barra de búsqueda
-        loadProducts() // Cargamos datos desde API
+        setupRecycler()
+        setupSearch()
+        loadProducts()
     }
 
-    private fun setupRecycler() { // Inicializa RecyclerView con layout manager y adaptador
-        // PASO CLAVE: pasamos onAddClick para que el botón "Añadir" haga la acción de añadir al carrito
-        adapter = ProductAdapter(items = emptyList(), onAddClick = { product ->
-            // confirmamos visualmente y llamamos al helper en una corrutina del lifecycleOwner
-            viewLifecycleOwner.lifecycleScope.launch {
-                // opcional: Toast rápido para comprobar que el click funciona (puedes quitarlo después)
-                Toast.makeText(requireContext(), "Añadiendo ${product.title}...", Toast.LENGTH_SHORT).show()
-
-                // Llama al helper que crea cart (si no existe) y createCartItem
-                val ok = CartHelper.addProductToCart(requireContext(), product, 1)
-                if (ok) {
-                    // opcional: actualizar badge o UI; ejemplo:
-                    // (activity as? MainActivity)?.updateCartBadge()
+    private fun setupRecycler() {
+        // Construimos el adapter usando la nueva firma (onItemClick, onAddClick)
+        adapter = ProductAdapter(
+            onItemClick = { product ->
+                // Abrir detalle al click sobre el item
+                val ctx = requireContext()
+                val intent = Intent(ctx, ProductDetailActivity::class.java)
+                intent.putExtra("product_id", product.id)
+                ctx.startActivity(intent)
+            },
+            onAddClick = { product ->
+                // Añadir al carrito desde el botón del item
+                viewLifecycleOwner.lifecycleScope.launch {
+                    Toast.makeText(requireContext(), "Añadiendo ${product.title}...", Toast.LENGTH_SHORT).show()
+                    val ok = CartHelper.addProductToCart(requireContext(), product, 1)
+                    if (ok) {
+                        // opcional: actualizar badge en la activity si tienes esa API
+                        // (activity as? MainActivity)?.updateCartBadge()
+                    } else {
+                        Toast.makeText(requireContext(), "No se pudo añadir al carrito", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
-        })
-        binding.recyclerProducts.layoutManager = LinearLayoutManager(requireContext()) // Lista vertical
-        binding.recyclerProducts.adapter = adapter // Asociamos adaptador
+        )
+
+        binding.recyclerProducts.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerProducts.adapter = adapter
     }
 
-    private fun setupSearch() { // Configura callbacks de búsqueda
-        // Usamos el SearchView de AppCompat (asegúrate que el view en el layout es androidx.appcompat.widget.SearchView)
+    private fun setupSearch() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean { // Al enviar búsqueda
-                filter(query) // Aplicamos filtro
-                return true // Indicamos que manejamos el evento
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                filter(query)
+                return true
             }
 
-            override fun onQueryTextChange(newText: String?): Boolean { // Mientras cambia el texto
-                filter(newText) // Aplicamos filtro en tiempo real
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filter(newText)
                 return true
             }
         })
     }
 
-    private fun filter(query: String?) { // Filtra lista local por nombre
-        val q = query?.trim()?.lowercase().orEmpty() // Normalizamos query a minúsculas
-        if (q.isBlank()) { // Si vacío, mostramos todos
-            adapter.updateData(allProducts) // Reset
+    private fun filter(query: String?) {
+        val q = query?.trim()?.lowercase().orEmpty()
+        if (q.isBlank()) {
+            // Usar submitList en lugar de updateData
+            adapter.submitList(allProducts)
         } else {
-            adapter.updateData(allProducts.filter { it.title.lowercase().contains(q) }) // Filtro simple
+            val filtered = allProducts.filter { it.title.lowercase().contains(q) }
+            adapter.submitList(filtered)
         }
     }
 
-    private fun loadProducts() { // Carga productos desde API con corrutinas
-        // Corrutina para carga de productos
-        viewLifecycleOwner.lifecycleScope.launch { // Lanzamos en el ciclo de vida del fragment
+    private fun loadProducts() {
+        viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val service = RetrofitClient.createProductService(requireContext()) // Obtenemos servicio de productos
-                val products = withContext(Dispatchers.IO) { // Ejecutamos llamada en hilo de IO
-                    service.getProducts() // GET /products
+                val service = RetrofitClient.createProductService(requireContext())
+                val products = withContext(Dispatchers.IO) {
+                    service.getProducts()
                 }
-                allProducts = products // Guardamos lista completa
-                adapter.updateData(products) // Actualizamos la UI
+                allProducts = products
+                // actualizamos la lista con submitList
+                adapter.submitList(products)
             } catch (e: Exception) {
-                // Podrías mostrar un Snackbar/Toast en caso de error
+                e.printStackTrace()
+                Toast.makeText(requireContext(), "Error cargando productos", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    override fun onDestroyView() { // Limpieza de ViewBinding para evitar memory leaks
+    override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null // Nulificamos binding cuando se destruye la vista
+        _binding = null
     }
 }

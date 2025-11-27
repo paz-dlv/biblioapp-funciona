@@ -12,23 +12,31 @@
 
         <Button
             android:id="@+id/btnRefresh"
-            android:text="Refrescar"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <Space android:layout_width="8dp" android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="Refrescar" />
 
         <Button
             android:id="@+id/btnFilter"
-            android:text="Filtrar"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="Filtrar"
+            android:layout_marginStart="8dp" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No hay productos"
+        android:gravity="center"
+        android:visibility="gone"
+        android:padding="12dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerProducts"
-        android:layout_marginTop="12dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:paddingTop="8dp" />
 </LinearLayout>
