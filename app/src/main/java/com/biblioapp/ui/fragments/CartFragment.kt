@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -169,7 +170,9 @@ class CartFragment : Fragment(), CartAdapter.Listener {
                 }
 
                 // Update adapter with final list
-                adapter.updateList(finalList)
+                items.clear()
+                items.addAll(finalList)
+                adapter.updateList(items)
 
                 // Debug logs
                 Log.d(TAG, "AFTER updateList -> adapter.itemCount = ${adapter.itemCount}")
@@ -202,10 +205,41 @@ class CartFragment : Fragment(), CartAdapter.Listener {
 
     override fun onQuantityChanged(item: CartItem, newQty: Int) {
         Log.d(TAG, "onQuantityChanged item=${item.id} newQty=$newQty")
+        // Implementar update si hace falta (puedes llamar a updateCartItem)
     }
 
     override fun onRemove(item: CartItem) {
-        Log.d(TAG, "onRemove item=${item.id}")
+        // Implement deletion from backend and update UI
+        AlertDialog.Builder(requireContext())
+            .setTitle("Eliminar")
+            .setMessage("¿Eliminar '${item.product?.title ?: "este ítem"}' del carrito?")
+            .setPositiveButton("Sí") { _, _ ->
+                // perform deletion
+                lifecycleScope.launch {
+                    try {
+                        withContext(Dispatchers.IO) {
+                            val service = RetrofitClient.createCartService(requireContext())
+                            service.deleteCartItem(item.id)
+                        }
+                        // Remove locally
+                        val idx = items.indexOfFirst { it.id == item.id }
+                        if (idx >= 0) {
+                            items.removeAt(idx)
+                            // adapter has defensive updateList; update data and UI
+                            adapter.updateList(items)
+                        }
+                        Toast.makeText(requireContext(), "Ítem eliminado", Toast.LENGTH_SHORT).show()
+                        // Update empty state and checkout visibility
+                        showEmpty(items.isEmpty())
+                        binding.btnCheckout.visibility = if (items.isNotEmpty()) View.VISIBLE else View.GONE
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error deleting item: ${e.message}", e)
+                        Toast.makeText(requireContext(), "No se pudo eliminar el ítem", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .setNegativeButton("No", null)
+            .show()
     }
 
     override fun onDestroyView() {
