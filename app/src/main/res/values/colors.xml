@@ -47,4 +47,10 @@
 
     <!-- Accento más fuerte para barras/toolbar (opcional) -->
     <color name="pastel_toolbar">#D89CE0</color>
+
+    <!-- Pastel background and cards -->
+    -->
+    <color name="pastel_header">#EAD9FF</color>       <!-- header suave (logo + welcome) -->
+
+
 </resources>

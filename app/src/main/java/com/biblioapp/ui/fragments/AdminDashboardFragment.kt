@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -22,10 +23,12 @@ class AdminDashboardFragment : Fragment() {
     private var _binding: FragmentAdminDashboardBinding? = null
     private val binding get() = _binding!!
 
+    // Helper para evitar NullPointer si binding no contiene el campo generado
+    private fun <T : View> findView(id: Int): T? = binding.root.findViewById(id)
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        // <- Asegurate de NO tener caracteres extra (p. ej. "-" antes de binding)
         _binding = FragmentAdminDashboardBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -35,24 +38,26 @@ class AdminDashboardFragment : Fragment() {
 
         val tm = TokenManager(requireContext())
 
-        // Datos del administrador desde TokenManager (ajusta si tus métodos tienen otros nombres)
         val name = tm.getUserName().takeIf { !it.isNullOrBlank() } ?: "Administrador"
-        val email = tm.getUserEmail().takeIf { !it.isNullOrBlank() } ?: "sin email"
         val role = tm.getRole().takeIf { !it.isNullOrBlank() } ?: "ADMIN"
 
-        binding.tvProfileName.text = name
-        binding.tvProfileEmail.text = email
-        binding.tvProfileRole.text = role
-
-        // Avatar: usar el drawable ic_user_avatar directamente (no generar iniciales)
+        // Header
+        binding.tvHeaderWelcome.text = "Bienvenido,"
+        binding.tvHeaderName.text = name
+        binding.tvHeaderRole.text = "Rol: $role"
+        binding.ivHeaderLogo.setImageResource(R.drawable.logo_app)
         binding.ivProfileAvatar.setImageResource(R.drawable.ic_user_avatar)
 
-        // Estadísticas placeholders (ajustadas a los ids del layout)
-        binding.tvStatsProductsValue.text = "0"
-        binding.tvStatsOrdersValue.text = "0"
-        binding.tvStatsUsersValue.text = "0"
+        // Referencia segura a TextViews (fallback a findViewById)
+        val tvProducts = findView<TextView>(R.id.tvStatsProductsValue)
+        val tvOrders = findView<TextView>(R.id.tvStatsOrdersValue)
+        val tvUsers = findView<TextView>(R.id.tvStatsUsersValue)
 
-        // Botón Cerrar sesión -> limpia TokenManager y vuelve a MainActivity limpiando back stack
+        // Inicializar placeholders
+        tvProducts?.text = "0"
+        tvOrders?.text = "0"
+        tvUsers?.text = "0"
+
         binding.btnLogoutProfile.setOnClickListener {
             tm.clear()
             val intent = Intent(requireContext(), MainActivity::class.java).apply {
@@ -62,17 +67,12 @@ class AdminDashboardFragment : Fragment() {
         }
 
         // CARGAR Y ACTUALIZAR LOS NÚMEROS DEL PANEL (productos, pedidos, usuarios)
-        loadCounts()
-    }
-
-    private fun loadCounts() {
         lifecycleScope.launch {
             try {
                 val productService = RetrofitClient.createProductService(requireContext())
                 val orderService = RetrofitClient.createOrderService(requireContext())
                 val userService = RetrofitClient.createUserService(requireContext())
 
-                // Ejecutar en paralelo para no bloquear el hilo UI
                 val prodsDeferred = async(Dispatchers.IO) { productService.getProducts() }
                 val ordersDeferred = async(Dispatchers.IO) { orderService.getOrders() }
                 val usersDeferred = async(Dispatchers.IO) { userService.getUsers() }
@@ -81,15 +81,14 @@ class AdminDashboardFragment : Fragment() {
                 val orders = ordersDeferred.await()
                 val users = usersDeferred.await()
 
-                // Actualizar la UI con los conteos reales
-                binding.tvStatsProductsValue.text = prods.size.toString()
-                binding.tvStatsOrdersValue.text = orders.size.toString()
-                binding.tvStatsUsersValue.text = users.size.toString()
+                // Actualizar UI en hilo principal
+                tvProducts?.text = prods.size.toString()
+                tvOrders?.text = orders.size.toString()
+                tvUsers?.text = users.size.toString()
             } catch (e: Exception) {
-                // En caso de fallo dejamos 0 y mostramos un toast breve (opcional)
-                binding.tvStatsProductsValue.text = "0"
-                binding.tvStatsOrdersValue.text = "0"
-                binding.tvStatsUsersValue.text = "0"
+                tvProducts?.text = "0"
+                tvOrders?.text = "0"
+                tvUsers?.text = "0"
                 Toast.makeText(requireContext(), "No se pudieron cargar los contadores: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
