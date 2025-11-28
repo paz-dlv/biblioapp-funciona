@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.fragments.AddProductFragment">
@@ -12,6 +13,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- Título -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -27,7 +29,8 @@
             android:hint="Ej: El Principito"
             android:background="@drawable/input_background"
             android:padding="12dp"
-            android:textSize="15sp"/>
+            android:textSize="15sp"
+            android:inputType="textCapWords" />
 
         <!-- Autor -->
         <TextView
@@ -46,7 +49,8 @@
             android:hint="Ej: Antoine de Saint-Exupéry"
             android:background="@drawable/input_background"
             android:padding="12dp"
-            android:textSize="15sp"/>
+            android:textSize="15sp"
+            android:inputType="textCapWords" />
 
         <!-- Género -->
         <TextView
@@ -65,7 +69,8 @@
             android:hint="Ej: Literatura Infantil"
             android:background="@drawable/input_background"
             android:padding="12dp"
-            android:textSize="15sp"/>
+            android:textSize="15sp"
+            android:inputType="textCapWords" />
 
         <!-- Descripción -->
         <TextView
@@ -85,13 +90,14 @@
             android:background="@drawable/input_background"
             android:padding="12dp"
             android:textSize="15sp"
-            android:gravity="top"/>
+            android:gravity="top"
+            android:inputType="textMultiLine" />
 
         <!-- Precio -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Precio"
+            android:text="Precio (CLP)"
             android:textStyle="bold"
             android:textSize="15sp"
             android:layout_marginTop="12dp"
@@ -105,7 +111,8 @@
             android:background="@drawable/input_background"
             android:padding="12dp"
             android:textSize="15sp"
-            android:inputType="number"/>
+            android:inputType="number"
+            android:importantForAutofill="no" />
 
         <!-- Stock -->
         <TextView
@@ -125,37 +132,46 @@
             android:background="@drawable/input_background"
             android:padding="12dp"
             android:textSize="15sp"
-            android:inputType="number"/>
+            android:inputType="number" />
 
-        <!-- Botón para seleccionar imágenes -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSelectImage"
-            style="?attr/materialButtonOutlinedStyle"
+        <!-- Botones de selección y envío -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginTop="16dp"
-            android:text="Seleccionar Imágenes"/>
+            android:weightSum="2">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSelectImage"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Seleccionar imágenes" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSubmit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Crear Libro"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
 
         <!-- RecyclerView para mostrar la vista previa de las imágenes seleccionadas -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvImagePreview"
             android:layout_width="match_parent"
             android:layout_height="120dp"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal"
+            android:layout_marginTop="12dp"
             android:visibility="gone"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:orientation="horizontal"
             tools:itemCount="3"
-            tools:listitem="@layout/item_image_preview"
-            tools:visibility="visible"/>
-
-        <!-- Botón de Enviar -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSubmit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Crear Libro"/>
+            tools:listitem="@layout/item_image_preview" />
 
         <!-- Barra de Progreso -->
         <ProgressBar
@@ -163,7 +179,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:visibility="gone"/>
+
     </LinearLayout>
 </ScrollView>

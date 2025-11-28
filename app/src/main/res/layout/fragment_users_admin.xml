@@ -5,25 +5,31 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:padding="8dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8dp">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/tvOrdersEmpty"
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchUser"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No hay órdenes"
-            android:visibility="gone"
-            android:padding="8dp" />
+            android:queryHint="Buscar usuario (nombre, email o teléfono)" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvOrders"
+            android:id="@+id/rvUsers"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:clipToPadding="false" />
 
+        <TextView
+            android:id="@+id/tvUsersEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No hay usuarios"
+            android:visibility="gone"
+            android:gravity="center"
+            android:padding="8dp" />
     </LinearLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

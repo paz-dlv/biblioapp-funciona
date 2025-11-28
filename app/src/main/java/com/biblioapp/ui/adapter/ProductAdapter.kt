@@ -1,6 +1,5 @@
 package com.biblioapp.ui.adapter
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -9,13 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.biblioapp.databinding.ItemProductBinding
 import com.biblioapp.model.Product
-import com.biblioapp.ui.ProductDetailActivity
+import com.biblioapp.utils.CurrencyUtils
 
 /**
  * ProductAdapter modernizado:
  * - Usa ListAdapter + DiffUtil para actualizaciones más eficientes y animadas.
  * - Expone onItemClick y onAddClick callbacks.
- * - Mantiene compatibilidad con el flujo que abre ProductDetailActivity.
+ * - No arranca Activities por su cuenta: delega la navegación al callback onItemClick.
+ * - Mantiene getProductAt(pos) para operaciones como swipe-to-delete.
  */
 class ProductAdapter(
     private val onItemClick: (Product) -> Unit = {},
@@ -34,7 +34,7 @@ class ProductAdapter(
 
     inner class VH(val binding: ItemProductBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(product: Product) {
-            // Imagen
+            // Imagen (primera disponible)
             val imageUrl = product.image?.firstOrNull()?.url
             if (!imageUrl.isNullOrBlank()) {
                 binding.imgProduct.load(imageUrl) {
@@ -45,34 +45,25 @@ class ProductAdapter(
                 binding.imgProduct.setImageResource(android.R.drawable.ic_menu_gallery)
             }
 
-            // Textos
-            binding.tvTitle.text = product.title
+            // Textos (seguro con fallback)
+            binding.tvTitle.text = product.title ?: "-"
             binding.tvAuthor?.text = product.author ?: ""
             binding.tvGenre?.text = product.genre ?: ""
             binding.tvDescription?.text = product.description ?: ""
-            // Formatea price como número con 2 decimales
-            binding.tvPrice.text = String.format("$%.2f", product.price ?: 0.0)
+
+            // Formateo CLP (ej: 19990 -> $19.990)
+            binding.tvPrice.text = CurrencyUtils.formatClp(product.price)
+
             binding.tvStock?.text = "Stock: ${product.stock ?: 0}"
 
-            // Click sobre el item
-            binding.root.setOnClickListener {
-                onItemClick(product)
-                // Compatibilidad con comportamiento anterior: abrir ProductDetailActivity si se desea
-                val ctx = binding.root.context
-                val intent = Intent(ctx, ProductDetailActivity::class.java)
-                // Intent original usaba pasar el objeto; si Product no es Parcelable/Serializable
-                // puedes pasar product.id en vez del objeto completo.
-                intent.putExtra("product_id", product.id)
-                ctx.startActivity(intent)
-            }
+            // Click: delegamos la navegación/acción al callback
+            binding.root.setOnClickListener { onItemClick(product) }
 
-            // Botón añadir (si existe en layout)
+            // Botón añadir (si existe en el layout)
             try {
-                binding.btnAdd.setOnClickListener {
-                    onAddClick(product)
-                }
+                binding.btnAdd.setOnClickListener { onAddClick(product) }
             } catch (_: Exception) {
-                // si el binding no contiene btnAdd, ignoramos
+                // Si el layout no dispone de btnAdd, ignoramos silenciosamente
             }
         }
     }
@@ -87,6 +78,8 @@ class ProductAdapter(
         holder.bind(getItem(position))
     }
 
-    // Helper público si necesitas acceder al item por posición desde la Activity/Fragment
+    /**
+     * Helper público para obtener el producto en una posición (útil para swipe/delete).
+     */
     fun getProductAt(position: Int): Product? = runCatching { getItem(position) }.getOrNull()
 }

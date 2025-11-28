@@ -3,8 +3,6 @@ package com.biblioapp.api
 import com.biblioapp.model.CreateProductRequest
 import com.biblioapp.model.CreateProductResponse
 import com.biblioapp.model.Product
-import com.biblioapp.model.UpdateProductRequest
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -19,12 +17,13 @@ interface ProductService {
     @GET("product/{product_id}")
     suspend fun getProduct(@Path("product_id") id: Int): Product
 
+    // Creación con request tipado (ajusta si tu backend devuelve Product en vez de wrapper)
     @POST("product")
-    suspend fun createProduct(@Body request: CreateProductRequest): CreateProductResponse
+    suspend fun createProduct(@Body body: CreateProductRequest): CreateProductResponse
 
     @PATCH("product/{product_id}")
-    suspend fun updateProduct(@Path("product_id") productId: Int, @Body request: UpdateProductRequest): Product
+    suspend fun updateProduct(@Path("product_id") id: Int, @Body body: Map<String, @JvmSuppressWildcards Any>): Product
 
     @DELETE("product/{product_id}")
-    suspend fun deleteProduct(@Path("product_id") productId: Int): Response<Unit>
+    suspend fun deleteProduct(@Path("product_id") id: Int)
 }

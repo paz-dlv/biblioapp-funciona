@@ -27,7 +27,7 @@ class OrdersAdapter(private val onClick: (Order) -> Unit = {}) :
                 // cambio comentado: usar it/100.0 si total está en centavos
                 String.format("$%.2f", it) // o String.format("$%.2f", it / 100.0)
             } ?: "$0.00"
-            b.tvOrderInfo.text = "Total: $displayTotal • Estado: ${o.status ?: "?"}"
+            b.tvOrderInfo.text = "Total: $displayTotal • Estado: ${o.estado ?: "?"}"
             b.root.setOnClickListener { onClick(o) }
         }
     }

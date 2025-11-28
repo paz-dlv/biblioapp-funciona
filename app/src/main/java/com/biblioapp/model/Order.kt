@@ -8,6 +8,6 @@ data class Order(
     val total: Double? = null,
     val user_id: Int? = null,
     @SerializedName("estado")
-    val status: String? = null
-    // añade más campos si tu backend devuelve (items, address, etc.)
+    val estado: String? = null
+
 )
