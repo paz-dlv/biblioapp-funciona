@@ -3,22 +3,28 @@ package com.biblioapp.model
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
+/**
+ * Modelo User adaptado al JSON que devuelve tu backend.
+ * Todos los campos son opcionales con valores por defecto para evitar fallos de parsing.
+ */
 data class User(
-    @SerializedName("id") val id: Int,
+    val id: Int = 0,
 
-    @SerializedName("created_at") val createdAt: Long?,
+    @SerializedName("created_at")
+    val createdAt: Long? = null,
 
-    @SerializedName("name") val name: String?,
+    val name: String? = null,
 
-    @SerializedName("email") val email: String?,
+    val lastname: String? = null,
 
-    @SerializedName("lastname") val lastname: String?,
+    val email: String? = null,
 
-    @SerializedName("status") val status: String?,
+    val status: String? = null,
 
-    @SerializedName("shipping_address") val shippingAddress: String?,
+    @SerializedName("shipping_address")
+    val shippingAddress: String? = null,
 
-    @SerializedName("phone") val phone: String?,
+    val phone: String? = null,
 
-    @SerializedName("role") val role: String?
+    val role: String? = null
 ) : Serializable
